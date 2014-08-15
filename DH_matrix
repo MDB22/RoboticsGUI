@@ -1,0 +1,42 @@
+/*
+*/
+
+import matrixMath.*;
+
+float[][] T_matrix_one(alpha, a, d, theta)
+{
+  float alpha_rad = radians(alpha);
+  float theta_rad = radians(theta);
+  
+  float[][] Rx_alpha = { {1, 0, 0 0},
+                        {0, cos(alpha_rad), -sin(alpha_rad), 0},
+                        {0, sin(alpha_rad), cos(alpha_rad), 0},
+                        {0 0 0 1}};
+    
+  float[][] Dx_a = { {1, 0, 0, a},
+                     {0, 1, 0, 0},
+                     {0, 0, 1, 0},
+                     { 0 0 0 1}    };
+    
+  float[][] Rz_theta = { {cos(theta_rad), -sind(theta_rad), 0, 0},
+                         {sind(theta_rad), cosd(theta_rad), 0, 0},
+                         {0, 0, 1, 0},
+                         {0, 0, 0, 1} };
+    
+  float[][] Dz_d = { {1, 0, 0, 0}, 
+                     {0, 1, 0, 0},
+                     {0, 0, 1, d},
+                     {0, 0, 0, 1} };
+                     
+  matrixMath Rx = new matrixMath(Rx_alpha);
+  matrixMath Dx = new matrixMath(Dx_d);
+  matrixMath Rz = new matrixMath(Rz_theta);
+  matrixMath Dz = new matrixMath(Dz_d);
+  
+  //T = Rx_alpha * Dx_a * Rz_theta * Dz_d;
+  matrixMath T = new matrixMath(multiplySquareMatrix(Rx, Dx);
+  T = multiplySquareMatrix(T,Rz);
+  T = multiplySquareMatrix(T,Dz);
+  
+  return T;
+}
