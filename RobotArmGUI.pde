@@ -37,6 +37,7 @@ Arduino arduino;
 
 ArrayList<ServoController> servos = new ArrayList<ServoController>();
 ArrayList<TextAreaGUI> display = new ArrayList<TextAreaGUI>();
+MatrixGUI matrixDisplay;
 
 float home[] = new float[Constants.NUM_SERVOS];
 
@@ -73,6 +74,9 @@ void setup() {
 
   // Add display areas
   addDisplay();
+  
+  // Add display for the matrix
+  addMatrixDisplay();
 
   // Add servo controllers to UI
   addServos();
@@ -95,6 +99,13 @@ void draw() {
   text("Servo Values", Constants.DISPLAY_X, Constants.DISPLAY_Y - 20);
   textAlign(LEFT);
   text("Servo Controls", Constants.XBOX, Constants.YBOX - 20);
+  text("Transformation Matrix", Constants.MATRIX_X, Constants.MATRIX_Y - 20);
+  
+  textSize(10);
+  text("Rotation", Constants.MATRIX_X, Constants.MATRIX_Y -5);
+  text("x-translation", Constants.MATRIX_X_LABEL, Constants.MATRIX_Y_LABEL);
+  text("y-translation", Constants.MATRIX_X_LABEL, Constants.MATRIX_Y_LABEL+Constants.MATRIX_ELEMENT_HEIGHT);
+  text("z-translation", Constants.MATRIX_X_LABEL, Constants.MATRIX_Y_LABEL+2*Constants.MATRIX_ELEMENT_HEIGHT);
 
   // Update displays with feedback from servos
   for (TextAreaGUI t : display) {
@@ -114,11 +125,17 @@ void addButtons() {
 void addDisplay() {
   for (int i = 0; i < Constants.NUM_SERVOS; i++) {
     display.add(new TextAreaGUI(arduino, Constants.ANALOG_PINS[i], cp5, 
-    Constants.CONTROLLER_NAMES[i], Constants.DISPLAY_X, 
-    Constants.DISPLAY_Y + i*Constants.TEXTBOX_SEPARATION, 
-    Constants.TEXTBOX_WIDTH, Constants.TEXTBOX_HEIGHT, 
-    0, 170, home[i]));
+                                Constants.CONTROLLER_NAMES[i], Constants.DISPLAY_X, 
+                                Constants.DISPLAY_Y + i*Constants.TEXTBOX_SEPARATION, 
+                                Constants.TEXTBOX_WIDTH, Constants.TEXTBOX_HEIGHT, 
+                                0, 170, home[i]));
   }
+}
+
+void addMatrixDisplay() {
+  matrixDisplay = new MatrixGUI(Constants.MATRIX_X, Constants.MATRIX_Y,
+                                Constants.MATRIX_X_SEPARATION, Constants.MATRIX_Y_SEPARATION,
+                                Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_ELEMENT_HEIGHT);
 }
 
 void addServos() {
@@ -128,7 +145,7 @@ void addServos() {
     Constants.YBOX + i*Constants.TEXTBOX_SEPARATION, 
     Constants.TEXTBOX_WIDTH, Constants.TEXTBOX_HEIGHT, 
     Constants.XKNOB[i/3], Constants.YKNOB[i%3], Constants.KNOB_RADII[i], 
-    0, 170, home[i], Constants.DISPLAY_X, Constants.DISPLAY_Y + i*Constants.TEXTBOX_SEPARATION));
+    0, 170, home[i], Constants.DISPLAY_X, Constants.DISPLAY_Y + i*Constants.TEXTBOX_SEPARATION, i, matrixDisplay));
   }
 }
 

@@ -55,5 +55,25 @@ public static class Constants {
   // Constants for Textarea objects
   public static final int DISPLAY_X = 300;
   public static final int DISPLAY_Y = YBOX;
+  
+  // Constants for the matrix display
+  public static final String MATRIX_ELEMENT_NAMES[][] = {
+    {"Rxx", "Rxy", "Rxz", "Px"},
+    {"Ryx", "Ryy", "Ryz", "Py"},
+    {"Rzx", "Rzy", "Rzz", "Pz"},
+    {"pad1", "pad2", "pad3", "pad4"}
+  };
+    
+  
+  public static final int MATRIX_X = 40;
+  public static final int MATRIX_Y = 300;
+  public static final int MATRIX_X_SEPARATION = 40;
+  public static final int MATRIX_Y_SEPARATION = 20;
+  public static final int MATRIX_ELEMENT_WIDTH = 40;
+  public static final int MATRIX_ELEMENT_HEIGHT = 20;
+  public static final int MATRIX_X_GAP = 5;
+  public static final int MATRIX_Y_GAP = 5;
+  public static final int MATRIX_X_LABEL = MATRIX_X+4*MATRIX_X_SEPARATION+MATRIX_X_GAP+2;
+  public static final int MATRIX_Y_LABEL = MATRIX_Y+MATRIX_ELEMENT_HEIGHT/2;
 }
 

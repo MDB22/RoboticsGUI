@@ -5,6 +5,7 @@ public class ServoController {
 
   TextBoxGUI textbox;
   KnobGUI knob;
+  int servoID;
 
   String name;
 
@@ -24,19 +25,22 @@ public class ServoController {
   //ServoController(ControlP5 cp5, ControlDescriptor descriptor) {
   ServoController(Arduino arduino, int pin, ControlP5 cp5, 
   String name, int xBox, int yBox, int width, int height, int xKnob, int yKnob, 
-  int radius, float min, float max, float initial, int xDisplay, int yDisplay) {
+  int radius, float min, float max, float initial, int xDisplay, int yDisplay, 
+  int servoID, MatrixGUI matrixGUI) {
 
     if (arduino != null) {
       arduino.pinMode(pin, Arduino.SERVO);
     }
 
     textbox = new TextBoxGUI(arduino, pin, cp5, name, xBox, yBox, width, height);
-    knob = new KnobGUI(arduino, pin, cp5, name, xKnob, yKnob, radius, min, max, initial); 
+    knob = new KnobGUI(arduino, pin, cp5, name, xKnob, yKnob, radius, min, max, initial, servoID); 
 
     textbox.setKnobGUI(knob);
     knob.setTextBoxGUI(textbox);
+    knob.setMatrixGUI(matrixGUI);
 
     this.name = name;
+    this.servoID = servoID;  //this will be a number between 0 and 5 (6 including gripper)
   }
 
   public float getValue() {

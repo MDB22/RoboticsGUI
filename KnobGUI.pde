@@ -6,13 +6,14 @@ public class KnobGUI extends Knob {
   int pin;
 
   public TextBoxGUI textbox;
+  public MatrixGUI matrixGUI;
 
   private float min, max;
 
   //private boolean 
 
   public KnobGUI(Arduino arduino, int pin, ControlP5 cp5, String name, 
-  int x, int y, int radius, float min, float max, float start) {
+  int x, int y, int radius, float min, float max, float start, int servoID) {
     super(cp5, name + "Knob");
 
     this.arduino = arduino;
@@ -28,11 +29,13 @@ public class KnobGUI extends Knob {
     this.setLabel(name);
     this.setNumberOfTickMarks(Constants.NUM_TICKS);
     this.setShowAngleRange(false);
+    final int servoNum = servoID;
 
     this.addListener(new ControlListener() {
       public void controlEvent(ControlEvent e) {
         float val = e.getValue();
         textbox.setText(String.format("%.2f", val));
+        matrixGUI.setJointValue(servoNum, val);
         setServoValue((int) val);
       }
     }
@@ -48,10 +51,14 @@ public class KnobGUI extends Knob {
   public void setTextBoxGUI(TextBoxGUI textbox) {
     this.textbox = textbox;
   }
+  
+  public void setMatrixGUI(MatrixGUI matrixGUI) {
+    this.matrixGUI = matrixGUI;
+  }
 
   public void updateValue(float value) {
     if (value >= min && value <= max) {
-      this.setValue(value);
+     this.setValue(value);
     }
   }
 }
