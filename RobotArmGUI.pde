@@ -141,11 +141,12 @@ void addMatrixDisplay() {
 void addServos() {
   for (int i = 0; i < Constants.NUM_SERVOS; i++) {    
     servos.add(new ServoController(arduino, Constants.PWM_PINS[i], cp5, 
-    Constants.CONTROLLER_NAMES[i], Constants.XBOX, 
-    Constants.YBOX + i*Constants.TEXTBOX_SEPARATION, 
-    Constants.TEXTBOX_WIDTH, Constants.TEXTBOX_HEIGHT, 
-    Constants.XKNOB[i/3], Constants.YKNOB[i%3], Constants.KNOB_RADII[i], 
-    0, 170, home[i], Constants.DISPLAY_X, Constants.DISPLAY_Y + i*Constants.TEXTBOX_SEPARATION, i, matrixDisplay));
+                                    Constants.CONTROLLER_NAMES[i], Constants.XBOX, 
+                                    Constants.YBOX + i*Constants.TEXTBOX_SEPARATION, 
+                                    Constants.TEXTBOX_WIDTH, Constants.TEXTBOX_HEIGHT, 
+                                    Constants.XKNOB[i/3], Constants.YKNOB[i%3], 
+                                    Constants.KNOB_RADII[i], 0, 170, home[i], 
+                                    Constants.DISPLAY_X, Constants.DISPLAY_Y + i*Constants.TEXTBOX_SEPARATION,i, matrixDisplay));
   }
 }
 

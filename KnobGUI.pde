@@ -35,7 +35,7 @@ public class KnobGUI extends Knob {
       public void controlEvent(ControlEvent e) {
         float val = e.getValue();
         textbox.setText(String.format("%.2f", val));
-        matrixGUI.setJointValue(servoNum, val);
+        matrixGUI.updateJointValue(servoNum, val);
         setServoValue((int) val);
       }
     }
