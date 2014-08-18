@@ -83,8 +83,6 @@ void setup() {
 
   // Allow for scrolling in knob controls
   addMouseWheelListener();
-  
-  print("Hello World");
 }
 
 void draw() {
