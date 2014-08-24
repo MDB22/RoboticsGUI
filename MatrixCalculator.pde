@@ -102,6 +102,56 @@ public class MatrixCalculator{
     }
     return c;
   }
+  public float[][] calcJOmega(float[] jointAngles){
+    //float[][] JOmega;
+        float[] q = correctIndex(jointAngles);  //makes q[i] equal to the angle of joint i
+
+    //Denavit-Hartenberg matrix values:
+    
+    //From inertial to top of rotated base
+    float alpha0 = 0; float a0 = 0; float d1 = 78; float theta1 = q[1];
+  
+    //From base to bottom of arm1
+    float alpha1 = 90; float a1 = 11; float d2 = 0; float theta2 = q[2]+90;
+  
+    //From bottom of arm 1 to arm1/2 joint (elbow)
+    float alpha2 = 0; float a2 = 130; float d3 = 18.5; float theta3 = q[3]+90;
+  
+    //From elbow to rotated end of arm3
+    float alpha3 = 90; float a3 = 0; float d4 = 127; float theta4 = q[4];
+  
+    //From end of arm3 to bottom of arm4
+    float alpha4 = -90; float a4 = 0; float d5 = 3; float theta5 = q[5];
+  
+    //from arm4 to rotated end effector
+    float alpha5 = 90; float a5 = 4; float d6 = 64; float theta6 = q[6];
+    float[][] T1 = T_matrix_one(alpha0, a0 ,d1, theta1);
+    float[][] T2 = T_matrix_one(alpha1, a1 ,d2, theta2);
+    float[][] T3 = T_matrix_one(alpha2, a2 ,d3, theta3);
+    float[][] T4 = T_matrix_one(alpha3, a3 ,d4, theta4);
+    float[][] T5 = T_matrix_one(alpha4, a4 ,d5, theta5);
+    float[][] T6 = T_matrix_one(alpha5, a5 ,d6, theta6);
+    
+    float[][] T1_2 = multiply4x4Matrix(T1, T2);
+    float[][] T1_3 = multiply4x4Matrix(T1_2, T3);
+    float[][] T1_4 = multiply4x4Matrix(T1_3, T4);
+    float[][] T1_5 = multiply4x4Matrix(T1_4, T5);
+    float[][] T1_6 = multiply4x4Matrix(T1_5, T6);
+    
+    /*
+    float[] z1 = {T1[0][2],T1[1][2],T1[2][2]};
+    float[] z2 = {T1_2[0][2],T1_2[1][2],T1_2[2][2]};
+    float[] z3 = {T1_3[0][2],T1_3[1][2],T1_3[2][2]};
+    float[] z4 = {T1_4[0][2],T1_4[1][2],T1_4[2][2]};
+    float[] z5 = {T1_5[0][2],T1_5[1][2],T1_5[2][2]};
+    float[] z6 = {T1_6[0][2],T1_6[1][2],T1_6[2][2]};*/
+    
+    float[][] JOmega = {{T1[0][2],T1_2[0][2],T1_3[0][2],T1_4[0][2],T1_5[0][2],T1_6[0][2]},
+                        {T1[1][2],T1_2[1][2],T1_3[1][2],T1_4[1][2],T1_5[1][2],T1_6[1][2]},
+                        {T1[2][2],T1_2[2][2],T1_3[2][2],T1_4[2][2],T1_5[2][2],T1_6[2][2]}};
+                        
+    return JOmega;
+  }
   
   //helper function useful for debugging.
   public void printMatrix(String name, float[][] matrix){

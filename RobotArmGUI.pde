@@ -38,6 +38,7 @@ Arduino arduino;
 ArrayList<ServoController> servos = new ArrayList<ServoController>();
 ArrayList<TextAreaGUI> display = new ArrayList<TextAreaGUI>();
 MatrixGUI matrixDisplay;
+RobotGUI robotDisplay;
 
 float home[] = new float[Constants.NUM_SERVOS];
 
@@ -46,22 +47,25 @@ PFont font;
 color background = color(4, 79, 111);
 color outline = color(84, 145, 158);
 
+long time = 0;
+
 void setup() {
-  size(900, 500);
+  size(900, 500, P3D);
   frame.setResizable(true);
-
-  // UNCOMMENT HERE
-  //  // Prints out the available serial ports.
-  //  println(Arduino.list());
-  //
-  //  // Modify this line, by changing the "0" to the index of the serial
-  //  // port corresponding to your Arduino board (as it appears in the list
-  //  // printed by the line above).
-  //  arduino = new Arduino(this, "COM4", 57600);
-  //
-  //  // Set the Arduino digital pins as inputs.
-  //  arduino.pinMode(13, Arduino.SERVO);
-
+  
+/*
+   //UNCOMMENT HERE
+    // Prints out the available serial ports.
+    println(Arduino.list());
+  
+    // Modify this line, by changing the "0" to the index of the serial
+    // port corresponding to your Arduino board (as it appears in the list
+    // printed by the line above).
+    arduino = new Arduino(this, "COM4", 57600);
+  
+    // Set the Arduino digital pins as inputs.
+    arduino.pinMode(13, Arduino.SERVO);
+*/
   cp5 = new ControlP5(this);
 
   // Read the home position from the text file
@@ -77,6 +81,8 @@ void setup() {
   
   // Add display for the matrix
   addMatrixDisplay();
+  
+  addRobotDisplay();
 
   // Add servo controllers to UI
   addServos();
@@ -111,6 +117,9 @@ void draw() {
   for (TextAreaGUI t : display) {
     t.updateValue();
   }
+  //rect(matrixDisplay.jointAngles[0],70,10,100);
+  robotDisplay.drawSomething();
+
 }
 
 void addButtons() {
@@ -128,7 +137,7 @@ void addDisplay() {
                                 Constants.CONTROLLER_NAMES[i], Constants.DISPLAY_X, 
                                 Constants.DISPLAY_Y + i*Constants.TEXTBOX_SEPARATION, 
                                 Constants.TEXTBOX_WIDTH, Constants.TEXTBOX_HEIGHT, 
-                                0, 170, home[i]));
+                                Constants.MIN_FEEDBACK[i], Constants.MAX_FEEDBACK[i], home[i]));
   }
 }
 
@@ -136,6 +145,10 @@ void addMatrixDisplay() {
   matrixDisplay = new MatrixGUI(Constants.MATRIX_X, Constants.MATRIX_Y,
                                 Constants.MATRIX_X_SEPARATION, Constants.MATRIX_Y_SEPARATION,
                                 Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_ELEMENT_HEIGHT);
+}
+
+void addRobotDisplay() {
+  robotDisplay = new RobotGUI(matrixDisplay);
 }
 
 void addServos() {

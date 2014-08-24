@@ -10,6 +10,7 @@ public class TextAreaGUI extends Textarea {
   int pin;
 
   int min, max;
+  int i, feedback;
 
   float val;
 
@@ -39,8 +40,18 @@ public class TextAreaGUI extends Textarea {
   public void updateValue() {
     // Perform analog read of pin and display servo position
     if (arduino != null) {
-      val = map(arduino.analogRead(pin), min, max, 0, 170); 
-      this.setText(String.format("%3.2f", val));
+      feedback=0;
+      for(i=0; i<20; i++) {
+        feedback += arduino.analogRead(pin);
+      }
+      feedback/=10;
+      
+      val = map(feedback, min, max, 0, 170); 
+      
+      if(millis() - time > Constants.DISP_UPDATE) {
+        this.setText(String.format("%3.2f", val));
+        time = millis();
+      }
     }
   }
 }

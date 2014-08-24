@@ -16,6 +16,14 @@ public static class Constants {
     0, 0, 0, 0, 0, 0
   };
   
+  public static final int MIN_FEEDBACK[] = {
+    165, 176, 168, 189, 184, 185
+  };
+  
+  public static final int MAX_FEEDBACK[] = {
+    684, 688, 684, 727, 726, 694
+  };
+  
   public static final float INITIAL_JOINT_ANGLES[] = {0,0,0,0,0,0};
 
   public static final int TEXTBOX_SEPARATION = 40;
@@ -38,7 +46,7 @@ public static class Constants {
   public static final int KNOB_RADII[] = {
     50, 50, 50, 35, 35, 35
   };
-
+  
   // Constants for the Button objects
   public static final int NUM_BUTTONS = 6;
 
@@ -57,6 +65,8 @@ public static class Constants {
   // Constants for Textarea objects
   public static final int DISPLAY_X = 300;
   public static final int DISPLAY_Y = YBOX;
+  
+  public static final int DISP_UPDATE = 500;
   
   // Constants for the matrix display
   public static final String MATRIX_ELEMENT_NAMES[][] = {
