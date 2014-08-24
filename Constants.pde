@@ -13,7 +13,7 @@ public static class Constants {
   };
 
   public static final int ANALOG_PINS[] = {
-    0, 0, 0, 0, 0, 0
+    2, 3, 4, 5, 6, 7
   };
   
   public static final int MIN_FEEDBACK[] = {

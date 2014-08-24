@@ -41,7 +41,7 @@ public class TextAreaGUI extends Textarea {
     // Perform analog read of pin and display servo position
     if (arduino != null) {
       feedback=0;
-      for(i=0; i<20; i++) {
+      for(i=0; i<10; i++) {
         feedback += arduino.analogRead(pin);
       }
       feedback/=10;
