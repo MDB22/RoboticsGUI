@@ -46,8 +46,9 @@ public class RobotGUI{
     lights();
 
     pushMatrix();              //setting up inertial frame
-      //scale(0.5,0.5,0.5);
-      translate(250,400,50);
+     
+      translate(1050,400,50);
+       scale(0.7,0.7,0.7);
       rotateX(radians(90));
       pushMatrix();
         rotate('z',matrixGUI.jointAngles[0]);    //joint 1
@@ -56,26 +57,26 @@ public class RobotGUI{
         pushMatrix();
           translate(11,0,0);    //a1
           rotate('x',90);  //alpha1
-          rotate('z',matrixGUI.jointAngles[1]+90-90);  //theta2
+          rotate('z',matrixGUI.jointAngles[1]+90);  //theta2
           drawArm('x',130,20,20); //a2
 
           pushMatrix();    //alpha2 = 0;
-            rotate('z',matrixGUI.jointAngles[2]+90-90);  //theta3
+            rotate('z',matrixGUI.jointAngles[2]+90);  //theta3
             drawArm('y',10,-95,10);  //d3
             
             pushMatrix();
               rotate('x',90);    //alpha3
-              rotate('z',matrixGUI.jointAngles[3]+90-90);  //theta4
+              rotate('z',matrixGUI.jointAngles[3]+90);  //theta4
               drawArm('z',10,5,32);  //d4
               
               pushMatrix();
                 rotate('x',-90);    //alpha4
-                rotate('z',matrixGUI.jointAngles[4]-90);
+                rotate('z',matrixGUI.jointAngles[4]);
                 drawArm('y',5,-64,10);
                 
                 pushMatrix();
                   rotate('x',90);
-                  rotate('z',matrixGUI.jointAngles[5]+90-90);
+                  rotate('z',matrixGUI.jointAngles[5]+90);
                   drawArm('z',15,15,15);
                   
                   pushMatrix();

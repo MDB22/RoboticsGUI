@@ -39,6 +39,7 @@ ArrayList<ServoController> servos = new ArrayList<ServoController>();
 ArrayList<TextAreaGUI> display = new ArrayList<TextAreaGUI>();
 MatrixGUI matrixDisplay;
 RobotGUI robotDisplay;
+Matrix m;
 
 float home[] = new float[Constants.NUM_SERVOS];
 
@@ -50,7 +51,7 @@ color outline = color(84, 145, 158);
 long time = 0;
 
 void setup() {
-  size(900, 500, P3D);
+  size(1200, 800, P3D);
   frame.setResizable(true);
   
 /*
@@ -106,12 +107,16 @@ void draw() {
   textAlign(LEFT);
   text("Servo Controls", Constants.XBOX, Constants.YBOX - 20);
   text("Transformation Matrix", Constants.MATRIX_X, Constants.MATRIX_Y - 20);
+  text("Jacobian Matrix", Constants.MATRIX_X, Constants.MATRIX_Y +120);
   
   textSize(10);
   text("Rotation", Constants.MATRIX_X, Constants.MATRIX_Y -5);
   text("x-translation", Constants.MATRIX_X_LABEL, Constants.MATRIX_Y_LABEL);
   text("y-translation", Constants.MATRIX_X_LABEL, Constants.MATRIX_Y_LABEL+Constants.MATRIX_ELEMENT_HEIGHT);
   text("z-translation", Constants.MATRIX_X_LABEL, Constants.MATRIX_Y_LABEL+2*Constants.MATRIX_ELEMENT_HEIGHT);
+  
+  text("JOmega", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+155);
+  text("JV", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+225);
 
   // Update displays with feedback from servos
   for (TextAreaGUI t : display) {
