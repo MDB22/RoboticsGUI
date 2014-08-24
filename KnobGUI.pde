@@ -4,7 +4,8 @@ public class KnobGUI extends Knob {
 
   final Arduino arduino;
   int pin;
-  int target;
+  float target;
+  float cur_pos;
   public TextBoxGUI textbox;
   public MatrixGUI matrixGUI;
 
@@ -46,15 +47,15 @@ public class KnobGUI extends Knob {
     if (arduino != null) {
       
       target = map(value, 0, 170, min, max);
-      cur_pos = map(analogRead(pin), min, max, 0, 170);
+      cur_pos = map(arduino.analogRead(pin), min, max, 0, 170);
       
       if(cur_pos > target) {
         while(abs(cur_pos - target) > 10) {
-          arduino.servoWrite(pin, cur_pos--);
+          arduino.servoWrite(pin, (int)cur_pos--);
         }
       } else if(cur_pos < target) {
         while(abs(cur_pos - target) > 10) {
-          arduino.servoWrite(pin, cur_pos++);
+          arduino.servoWrite(pin, (int)cur_pos++);
         }        
       }
       
