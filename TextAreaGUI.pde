@@ -9,13 +9,13 @@ public class TextAreaGUI extends Textarea {
   Arduino arduino;
   int pin;
 
-  int min, max;
+  int minFeedback, maxFeedback;
   int i, feedback;
 
-  float val;
+  float jointAngle;
 
   public TextAreaGUI(Arduino arduino, int pin, ControlP5 cp5, String name, 
-  int xBox, int yBox, int width, int height, int min, int max, float initial) {
+  int xBox, int yBox, int width, int height, int minFeedback, int maxFeedback, float initialAngle) {
     super(cp5, name + "Display");
 
     if (arduino != null) {
@@ -24,13 +24,13 @@ public class TextAreaGUI extends Textarea {
       arduino.pinMode(pin, Arduino.INPUT);
     }
 
-    this.min = min;
-    this.max = max;
+    this.minFeedback = minFeedback;
+    this.maxFeedback = maxFeedback;
 
     this.setPosition(xBox, yBox);
     this.setWidth(width);
     this.setHeight(height);
-    this.setText(String.format("%3.2f", initial));
+    this.setText(String.format("%3.2f", initialAngle));
     this.setLabel(name);
     this.setBorderColor(border);
     this.setColorForeground(fg);
@@ -46,10 +46,10 @@ public class TextAreaGUI extends Textarea {
       }
       feedback/=10;
       
-      val = map(feedback, min, max, 0, 170); 
+      jointAngle = map(feedback, minFeedback, maxFeedback, -85, 85); 
       
       if(millis() - time > Constants.DISP_UPDATE) {
-        this.setText(String.format("%3.2f", val));
+        this.setText(String.format("%3.2f", jointAngle));
         time = millis();
       }
     }

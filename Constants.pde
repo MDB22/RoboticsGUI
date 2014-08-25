@@ -24,6 +24,17 @@ public static class Constants {
     684, 688, 684, 727, 726, 694
   };
   
+  public static final int MIN_ANGLE[] = {
+    -88, -95, -97, -90, -90, -90
+  };
+    
+  public static final int MAX_ANGLE[] = {
+    82, 75, 73, 80, 80, 80
+  };
+    
+  public static final int SERVOVAL_MIN = 0;        //Check these with Trent
+  public static final int SERVOVAL_MAX = 180;
+  
   public static final float INITIAL_JOINT_ANGLES[] = {0,0,0,0,0,0};
 
   public static final int TEXTBOX_SEPARATION = 40;

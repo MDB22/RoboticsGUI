@@ -7,25 +7,23 @@ public class TextBoxGUI extends Textfield {
 
   public KnobGUI knob;
 
-  public TextBoxGUI(Arduino arduino, int pin, ControlP5 cp5, String name, 
-  int xBox, int yBox, int width, int height) {
-    super(cp5, name);
+  public TextBoxGUI(Arduino arduino, int pin, ControlP5 cp5, int servoID) {
+    super(cp5, Constants.CONTROLLER_NAMES[servoID]);
 
     this.arduino = arduino;
-    this.pin = pin;
-
-    this.setPosition(xBox, yBox);
-    this.setWidth(width);
-    this.setHeight(height);
+    this.pin = Constants.PWM_PINS[servoID];
+    this.setPosition(Constants.XBOX, Constants.YBOX + servoID*Constants.TEXTBOX_SEPARATION);
+    this.setWidth(Constants.TEXTBOX_WIDTH);
+    this.setHeight(Constants.TEXTBOX_HEIGHT);
     this.setText("0");
     this.setAutoClear(false);
 
     this.addListener(new ControlListener() {
       public void controlEvent(ControlEvent e) {
         try {
-          float val = Float.parseFloat(e.getStringValue());
-          if (val >= knob.getMin() && val <= knob.getMax()) {
-            knob.setValue(val);
+          float jointAngle = Float.parseFloat(e.getStringValue());
+          if (jointAngle >= knob.getMin() && jointAngle <= knob.getMax()) {
+            knob.setValue(jointAngle);
           }
         } 
         catch(NumberFormatException nfe) {

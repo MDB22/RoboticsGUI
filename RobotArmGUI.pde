@@ -66,7 +66,9 @@ void setup() {
   
     // Set the Arduino digital pins as inputs.
     arduino.pinMode(13, Arduino.SERVO);
-*/
+    
+    */
+
   cp5 = new ControlP5(this);
 
   // Read the home position from the text file
@@ -157,14 +159,8 @@ void addRobotDisplay() {
 }
 
 void addServos() {
-  for (int i = 0; i < Constants.NUM_SERVOS; i++) {    
-    servos.add(new ServoController(arduino, Constants.PWM_PINS[i], cp5, 
-                                    Constants.CONTROLLER_NAMES[i], Constants.XBOX, 
-                                    Constants.YBOX + i*Constants.TEXTBOX_SEPARATION, 
-                                    Constants.TEXTBOX_WIDTH, Constants.TEXTBOX_HEIGHT, 
-                                    Constants.XKNOB[i/3], Constants.YKNOB[i%3], 
-                                    Constants.KNOB_RADII[i], 0, 170, home[i], 
-                                    Constants.DISPLAY_X, Constants.DISPLAY_Y + i*Constants.TEXTBOX_SEPARATION,i, matrixDisplay));
+  for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {    
+    servos.add(new ServoController(arduino, cp5, servoID, matrixDisplay));
   }
 }
 
@@ -188,7 +184,7 @@ public void Stop() {
 
 public void Zero() {
   for (ServoController s : servos) {
-    s.setValue(0);
+    s.setJointAngle(0);
   }
 }
 
@@ -197,7 +193,7 @@ public void Home() {
   int count = 0;
 
   for (ServoController s : servos) {
-    s.setValue(home[count]);
+    s.setJointAngle(home[count]);
     count++;
   }
 }

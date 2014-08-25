@@ -8,26 +8,27 @@ public class KnobGUI extends Knob {
   float cur_pos;
   public TextBoxGUI textbox;
   public MatrixGUI matrixGUI;
+  String name;
 
-  private float min, max;
+  private float minAngle, maxAngle;
 
   //private boolean 
 
-  public KnobGUI(Arduino arduino, int pin, ControlP5 cp5, String name, 
-  int x, int y, int radius, float min, float max, float start, int servoID) {
-    super(cp5, name + "Knob");
+  public KnobGUI(Arduino arduino, int pin, ControlP5 cp5, int servoID) {
+    super(cp5, Constants.CONTROLLER_NAMES[servoID] + "Knob");
+    this.name = Constants.CONTROLLER_NAMES[servoID];
 
     this.arduino = arduino;
     this.pin = pin;
 
-    this.min = min;
-    this.max = max;
+    this.minAngle = Constants.MIN_ANGLE[servoID];
+    this.maxAngle = Constants.MAX_ANGLE[servoID];
 
-    this.setPosition(x, y);
-    this.setRadius(radius);
-    this.setRange(min, max);
-    this.setValue(start);
-    this.setLabel(name);
+    this.setPosition(Constants.XKNOB[servoID/3], Constants.YKNOB[servoID%3]);
+    this.setRadius(Constants.KNOB_RADII[servoID]);
+    this.setRange(minAngle, maxAngle);
+    this.setValue(home[servoID]);
+    this.setLabel(this.name);
     this.setNumberOfTickMarks(Constants.NUM_TICKS);
     this.setShowAngleRange(false);
     final int servoNum = servoID;
@@ -37,19 +38,20 @@ public class KnobGUI extends Knob {
         float val = e.getValue();
         textbox.setText(String.format("%.2f", val));
         matrixGUI.updateJointValue(servoNum, val);
-        setServoValue((int) val);
+        setServoValue((int) val, servoNum);
       }
     }
     );
   }
 
-  public void setServoValue(int value) {
+  public void setServoValue(int jointAngle, int servoID) {
     if (arduino != null) {
       
-      target = map(value, 0, 170, min, max);
-      cur_pos = map(arduino.analogRead(pin), min, max, 0, 170);
+      /*targetServoValue = map(jointAngle, Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
+      curPosServoValue = map(arduino.analogRead(pin), min, max, 0, 170);
       
-      if(cur_pos > target) {
+      
+      if(cur_pos > targetServoValue) {
         while(abs(cur_pos - target) > 10) {
           arduino.servoWrite(pin, (int)cur_pos--);
         }
@@ -57,9 +59,9 @@ public class KnobGUI extends Knob {
         while(abs(cur_pos - target) > 10) {
           arduino.servoWrite(pin, (int)cur_pos++);
         }        
-      }
-      
-      //arduino.servoWrite(pin, value);
+      }*/
+      float servoValue = map(jointAngle, Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
+      arduino.servoWrite(pin, (int) servoValue);
     }
   }
 
@@ -71,10 +73,10 @@ public class KnobGUI extends Knob {
     this.matrixGUI = matrixGUI;
   }
 
-  public void updateValue(float value) {
-    if (value >= min && value <= max) {
+  /*public void updateValue(float value) {
+    if (value >= minAngle && value <= maxAngle) {
      this.setValue(value);
     }
-  }
+  }*/
 }
 

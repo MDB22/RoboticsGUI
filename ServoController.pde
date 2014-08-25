@@ -6,6 +6,7 @@ public class ServoController {
   TextBoxGUI textbox;
   KnobGUI knob;
   int servoID;
+  int pwmPin;
 
   String name;
 
@@ -23,33 +24,27 @@ public class ServoController {
    float min, max, initial - min, max and initial values for controller
    */
   //ServoController(ControlP5 cp5, ControlDescriptor descriptor) {
-  ServoController(Arduino arduino, int pin, ControlP5 cp5, 
-  String name, int xBox, int yBox, int width, int height, int xKnob, int yKnob, 
-  int radius, float min, float max, float initial, int xDisplay, int yDisplay, 
-  int servoID, MatrixGUI matrixGUI) {
-
+  ServoController(Arduino arduino, ControlP5 cp5, int servoID, MatrixGUI matrixGUI) {
+    this.name = name;
+    this.servoID = servoID;  //this will be a number between 0 and 5 (6 including gripper)
+    this.pwmPin = Constants.PWM_PINS[servoID];
     if (arduino != null) {
-      arduino.pinMode(pin, Arduino.SERVO);
+      arduino.pinMode(this.pwmPin, Arduino.SERVO);
     }
-
-    textbox = new TextBoxGUI(arduino, pin, cp5, name, xBox, yBox, width, height);
-    knob = new KnobGUI(arduino, pin, cp5, name, xKnob, yKnob, radius, min, max, initial, servoID); 
-
+    textbox = new TextBoxGUI(arduino, this.pwmPin, cp5, servoID);
+    knob = new KnobGUI(arduino, this.pwmPin, cp5, servoID); 
     textbox.setKnobGUI(knob);
     knob.setTextBoxGUI(textbox);
     knob.setMatrixGUI(matrixGUI);
-
-    this.name = name;
-    this.servoID = servoID;  //this will be a number between 0 and 5 (6 including gripper)
   }
 
   public float getValue() {
     return knob.getValue();
   }
 
-  public void setValue(float value) {
-    textbox.setValue(Float.toString(value));
-    knob.setValue(value);
+  public void setJointAngle(float jointAngle) {
+    textbox.setValue(Float.toString(jointAngle));
+    knob.setValue(jointAngle);
   }
 }
 
