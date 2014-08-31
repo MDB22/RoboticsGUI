@@ -37,6 +37,11 @@ Arduino arduino;
 
 ArrayList<ServoController> servos = new ArrayList<ServoController>();
 ArrayList<TextAreaGUI> display = new ArrayList<TextAreaGUI>();
+
+MatlabComm comm;
+MatlabTypeConverter converter;
+MatlabNumericArray array;
+
 MatrixGUI matrixDisplay;
 RobotGUI robotDisplay;
 Matrix m;
@@ -52,24 +57,25 @@ long time = 0;
 
 void setup() {
   size(1200, 800, P3D);
-  frame.setResizable(true);
-  
-/*
-   //UNCOMMENT HERE
-    // Prints out the available serial ports.
-    println(Arduino.list());
-  
-    // Modify this line, by changing the "0" to the index of the serial
-    // port corresponding to your Arduino board (as it appears in the list
-    // printed by the line above).
-    arduino = new Arduino(this, "COM4", 57600);
-  
-    // Set the Arduino digital pins as inputs.
-    arduino.pinMode(13, Arduino.SERVO);
-    
-    */
 
   cp5 = new ControlP5(this);
+  frame.setResizable(true);
+  frame.setTitle("Controller");
+
+  /*
+   //UNCOMMENT HERE
+   // Prints out the available serial ports.
+   println(Arduino.list());
+   
+   // Modify this line, by changing the "0" to the index of the serial
+   // port corresponding to your Arduino board (as it appears in the list
+   // printed by the line above).
+   arduino = new Arduino(this, "COM4", 57600);
+   
+   // Set the Arduino digital pins as inputs.
+   arduino.pinMode(13, Arduino.SERVO);
+   
+   */
 
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
@@ -81,17 +87,21 @@ void setup() {
 
   // Add display areas
   addDisplay();
-  
+
   // Add display for the matrix
   addMatrixDisplay();
-  
-  addRobotDisplay();
 
   // Add servo controllers to UI
   addServos();
 
   // Allow for scrolling in knob controls
   addMouseWheelListener();
+
+  // Add simulated robot
+  addRobotDisplay();
+  
+  // Initialise MATLAB communication
+  initMATLAB();
 }
 
 void draw() {
@@ -110,13 +120,13 @@ void draw() {
   text("Servo Controls", Constants.XBOX, Constants.YBOX - 20);
   text("Transformation Matrix", Constants.MATRIX_X, Constants.MATRIX_Y - 20);
   text("Jacobian Matrix", Constants.MATRIX_X, Constants.MATRIX_Y +120);
-  
+
   textSize(10);
   text("Rotation", Constants.MATRIX_X, Constants.MATRIX_Y -5);
   text("x-translation", Constants.MATRIX_X_LABEL, Constants.MATRIX_Y_LABEL);
   text("y-translation", Constants.MATRIX_X_LABEL, Constants.MATRIX_Y_LABEL+Constants.MATRIX_ELEMENT_HEIGHT);
   text("z-translation", Constants.MATRIX_X_LABEL, Constants.MATRIX_Y_LABEL+2*Constants.MATRIX_ELEMENT_HEIGHT);
-  
+
   text("JOmega", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+155);
   text("JV", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+225);
 
@@ -124,9 +134,27 @@ void draw() {
   for (TextAreaGUI t : display) {
     t.updateValue();
   }
+
   //rect(matrixDisplay.jointAngles[0],70,10,100);
   robotDisplay.drawSomething();
+}
 
+void initMATLAB() {
+  try {
+    // Set up new MATLAB proxy session
+    comm = new MatlabComm();
+    comm.proxy.eval("clc");
+    comm.proxy.eval("clear all");
+    
+    // Converts MATLAB data types to Java types and vice versa
+    converter = new MatlabTypeConverter(comm.proxy);
+    
+    for (ServoController s : servos) {
+      comm.proxy.setVariable(s.name,s.getValue());
+    }
+  } catch (Exception e) {
+    println("Exception caught!");
+  }
 }
 
 void addButtons() {
@@ -141,27 +169,27 @@ void addButtons() {
 void addDisplay() {
   for (int i = 0; i < Constants.NUM_SERVOS; i++) {
     display.add(new TextAreaGUI(arduino, Constants.ANALOG_PINS[i], cp5, 
-                                Constants.CONTROLLER_NAMES[i], Constants.DISPLAY_X, 
-                                Constants.DISPLAY_Y + i*Constants.TEXTBOX_SEPARATION, 
-                                Constants.TEXTBOX_WIDTH, Constants.TEXTBOX_HEIGHT, 
-                                Constants.MIN_FEEDBACK[i], Constants.MAX_FEEDBACK[i], home[i]));
+    Constants.CONTROLLER_NAMES[i], Constants.DISPLAY_X, 
+    Constants.DISPLAY_Y + i*Constants.TEXTBOX_SEPARATION, 
+    Constants.TEXTBOX_WIDTH, Constants.TEXTBOX_HEIGHT, 
+    Constants.MIN_FEEDBACK[i], Constants.MAX_FEEDBACK[i], home[i]));
   }
 }
 
 void addMatrixDisplay() {
-  matrixDisplay = new MatrixGUI(Constants.MATRIX_X, Constants.MATRIX_Y,
-                                Constants.MATRIX_X_SEPARATION, Constants.MATRIX_Y_SEPARATION,
-                                Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_ELEMENT_HEIGHT);
-}
-
-void addRobotDisplay() {
-  robotDisplay = new RobotGUI(matrixDisplay);
+  matrixDisplay = new MatrixGUI(cp5, Constants.MATRIX_X, Constants.MATRIX_Y, 
+  Constants.MATRIX_X_SEPARATION, Constants.MATRIX_Y_SEPARATION, 
+  Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_ELEMENT_HEIGHT);
 }
 
 void addServos() {
   for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {    
     servos.add(new ServoController(arduino, cp5, servoID, matrixDisplay));
   }
+}
+
+void addRobotDisplay() {
+  robotDisplay = new RobotGUI(matrixDisplay);
 }
 
 // Enables mouse scrolling for knob controls

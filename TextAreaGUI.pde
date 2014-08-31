@@ -48,7 +48,12 @@ public class TextAreaGUI extends Textarea {
       
       jointAngle = map(feedback, minFeedback, maxFeedback, -85, 85); 
       
+      /*
+      This part is probably going to fail when the Arduino is plugged in,
+      where is the "time" variable initialised?
+      */
       if(millis() - time > Constants.DISP_UPDATE) {
+        println("Time is: " + time);
         this.setText(String.format("%3.2f", jointAngle));
         time = millis();
       }

@@ -25,7 +25,7 @@ public class ServoController {
    */
   //ServoController(ControlP5 cp5, ControlDescriptor descriptor) {
   ServoController(Arduino arduino, ControlP5 cp5, int servoID, MatrixGUI matrixGUI) {
-    this.name = name;
+    this.name = Constants.CONTROLLER_NAMES[servoID];
     this.servoID = servoID;  //this will be a number between 0 and 5 (6 including gripper)
     this.pwmPin = Constants.PWM_PINS[servoID];
     if (arduino != null) {

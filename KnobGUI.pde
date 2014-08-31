@@ -2,17 +2,20 @@ import controlP5.*;
 
 public class KnobGUI extends Knob {
 
-  final Arduino arduino;
-  int pin;
-  float target;
-  float cur_pos;
-  public TextBoxGUI textbox;
-  public MatrixGUI matrixGUI;
-  String name;
+  private final Arduino arduino;
+  
+  private int pin;
+  private float target;
+  private float cur_pos;
+  
+  private TextBoxGUI textbox;
+  private MatrixGUI matrixGUI;
+  
+  private String name;
 
   private float minAngle, maxAngle;
-
-  //private boolean 
+  
+  private final int ID;
 
   public KnobGUI(Arduino arduino, int pin, ControlP5 cp5, int servoID) {
     super(cp5, Constants.CONTROLLER_NAMES[servoID] + "Knob");
@@ -31,14 +34,15 @@ public class KnobGUI extends Knob {
     this.setLabel(this.name);
     this.setNumberOfTickMarks(Constants.NUM_TICKS);
     this.setShowAngleRange(false);
-    final int servoNum = servoID;
-
+    
+    this.ID = servoID;
+    
     this.addListener(new ControlListener() {
       public void controlEvent(ControlEvent e) {
         float val = e.getValue();
         textbox.setText(String.format("%.2f", val));
-        matrixGUI.updateJointValue(servoNum, val);
-        setServoValue((int) val, servoNum);
+        matrixGUI.updateJointValue(ID, val);
+        setServoValue((int) val, ID);
       }
     }
     );
