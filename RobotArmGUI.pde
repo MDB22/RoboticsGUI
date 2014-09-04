@@ -138,7 +138,7 @@ void draw() {
   }
 
   //rect(matrixDisplay.jointAngles[0],70,10,100);
-  robotDisplay.drawSomething();
+  robotDisplay.drawRobot();
 }
 
 void initMATLAB() {
