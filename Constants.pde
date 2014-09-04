@@ -25,11 +25,11 @@ public static class Constants {
   };
   
   public static final int MIN_ANGLE[] = {
-    -88, -146, -147, -90, -60, -90
+    -88, -95, -97, -90, -90, -90
   };
     
   public static final int MAX_ANGLE[] = {
-    82, 24, 23, 80, 110, 80
+    82, 75, 73, 80, 80, 80
   };
     
   public static final int SERVOVAL_MIN = 0;        //Check these with Trent

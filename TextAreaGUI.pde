@@ -53,7 +53,7 @@ public class TextAreaGUI extends Textarea {
       where is the "time" variable initialised?
       */
       if(millis() - time > Constants.DISP_UPDATE) {
-        //println("Time is: " + time);
+        println("Time is: " + time);
         this.setText(String.format("%3.2f", jointAngle));
         time = millis();
       }
