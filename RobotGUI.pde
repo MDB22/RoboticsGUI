@@ -41,7 +41,7 @@ public class RobotGUI{
   }
     
   
-  public void drawSomething(){
+  public void drawRobot(){
     //rect(matrixGUI.jointAngles[0],70,10,100);
     lights();
 

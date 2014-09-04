@@ -9,11 +9,11 @@ public static class Constants {
   };
 
   public static final int PWM_PINS[] = {
-    2, 3, 4, 5, 6, 7
+    2, 3, 4, 8, 6, 7
   };
 
   public static final int ANALOG_PINS[] = {
-    0,1,2,3,4,5                                      //2, 3, 4, 5, 6, 7
+    5,4,3,2,1,0                                      //2, 3, 4, 5, 6, 7
   };
   
   public static final int MIN_FEEDBACK[] = {
@@ -25,11 +25,19 @@ public static class Constants {
   };
   
   public static final int MIN_ANGLE[] = {
-    -88, -146, -147, -90, -60, -90
+    -50,-50,-50,-50,-50,-50    //-88, -146, -147, -90, -60, -90
   };
     
   public static final int MAX_ANGLE[] = {
-    82, 24, 23, 80, 110, 80
+    50, 50, 50, 50, 50, 50      //82, 24, 23, 80, 110, 80
+  };
+  
+  public static final int SERVO_OFFSET[] = {    //when the sevrowrite gives these angles, corresponds to home position
+    50, 134, 154, 50, 70, 40
+  };
+  
+  public static final int SERVO_DIR[] = {      //-1 means increasing servoValue decreases joint Angle.
+    -1,-1,1,1,-1,1
   };
     
   public static final int SERVOVAL_MIN = 0;        //Check these with Trent

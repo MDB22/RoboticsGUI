@@ -169,12 +169,14 @@ void addButtons() {
 }
 
 void addDisplay() {
-  for (int i = 0; i < Constants.NUM_SERVOS; i++) {
-    display.add(new TextAreaGUI(arduino, Constants.ANALOG_PINS[i], cp5, 
+  for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {
+    /*display.add(new TextAreaGUI(arduino, Constants.ANALOG_PINS[i], cp5, 
     Constants.CONTROLLER_NAMES[i], Constants.DISPLAY_X, 
     Constants.DISPLAY_Y + i*Constants.TEXTBOX_SEPARATION, 
     Constants.TEXTBOX_WIDTH, Constants.TEXTBOX_HEIGHT, 
     Constants.MIN_FEEDBACK[i], Constants.MAX_FEEDBACK[i], home[i]));
+  }*/
+    display.add(new TextAreaGUI(arduino, cp5, servoID));
   }
 }
 
