@@ -37,6 +37,9 @@ Arduino arduino;
 
 ArrayList<ServoController> servos = new ArrayList<ServoController>();
 ArrayList<TextAreaGUI> display = new ArrayList<TextAreaGUI>();
+ArrayList<float[]> data = new ArrayList<float[]>();
+
+Toggle logData;
 
 MatlabComm comm;
 MatlabTypeConverter converter;
@@ -62,7 +65,7 @@ void setup() {
   frame.setResizable(true);
   frame.setTitle("Controller");
 
-  
+  /*
    //UNCOMMENT HERE
    // Prints out the available serial ports.
    println(Arduino.list());
@@ -75,7 +78,7 @@ void setup() {
    // Set the Arduino digital pins as inputs.
    arduino.pinMode(13, Arduino.SERVO);
    
-   
+   */
 
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
@@ -84,6 +87,9 @@ void setup() {
 
   // Add buttons to UI
   addButtons();
+
+  // Add logging control to UI
+  addLogging();
 
   // Add display areas
   addDisplay();
@@ -147,14 +153,15 @@ void initMATLAB() {
     comm = new MatlabComm();
     comm.proxy.eval("clc");
     comm.proxy.eval("clear all");
-    
+
     // Converts MATLAB data types to Java types and vice versa
     converter = new MatlabTypeConverter(comm.proxy);
-    
+
     for (ServoController s : servos) {
-      comm.proxy.setVariable(s.name,s.getValue());
+      comm.proxy.setVariable(s.name, s.getFeedback());
     }
-  } catch (Exception e) {
+  } 
+  catch (Exception e) {
     println("Exception caught!");
   }
 }
@@ -166,6 +173,12 @@ void addButtons() {
         .setSize(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT)
           ;
   }
+}
+
+void addLogging() {
+  logData = new Toggle(cp5, Constants.LOGBUTTON_NAME);
+  logData.setPosition(Constants.LOG_XPOS, Constants.LOG_YPOS);
+  logData .setSize(Constants.LOG_XSIZE, Constants.LOG_YSIZE);
 }
 
 void addDisplay() {
@@ -230,23 +243,58 @@ public void Home() {
   }
 }
 
-// Event handler for "Record" button
-public void Record() {
+// Event handler for "SetHome" button
+public void SetHome() {
   String stringData[] = new String[Constants.NUM_SERVOS];
 
   int count = 0;
 
   for (ServoController s : servos) {
-    stringData[count] = String.format("%3.2f", s.getValue());
+    stringData[count] = String.format("%3.2f", s.getFeedback());
     count++;
   }
 
   saveStrings("data/home.txt", stringData);
 }
 
+// Event handler for "Record" button
+public void Record() {
+  float[] d = new float[Constants.NUM_SERVOS];
+
+  for (ServoController s : servos) {
+    d[s.getID()] = s.getFeedback();
+    print(s.getFeedback() + " ");
+  }
+
+  println();
+
+  data.add(d);
+}
+
 // Event handler for "Exit" button
 public void Exit() {
+
+  if (logData.getState()) {
+    String stringData[] = new String[data.size()];
+
+    int count = 0;
+
+    for (float[] f : data) {
+      stringData[count] = "";
+      
+      for (int i = 0; i < f.length; i++) {
+        stringData[count] += String.format("%3.2f", f[i]) + " ";
+      }
+      count++;
+    }
+
+    saveStrings("data/log.txt", stringData);
+  }
+
   exit();
+}
+
+public void LogData(boolean flag) {
 }
 
 public void keyPressed() {

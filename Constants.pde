@@ -67,10 +67,10 @@ public static class Constants {
   };
   
   // Constants for the Button objects
-  public static final int NUM_BUTTONS = 6;
+  public static final int NUM_BUTTONS = 7;
 
   public static final String BUTTON_NAMES[] = {
-    "Start", "Stop", "Zero", "Home", "Record", "Exit"
+    "Start", "Stop", "Zero", "Home", "SetHome", "Record", "Exit"
   };
 
   public static final int BUTTON_X = 80;
@@ -105,5 +105,14 @@ public static class Constants {
   public static final int MATRIX_Y_GAP = 10;
   public static final int MATRIX_X_LABEL = MATRIX_X+4*MATRIX_X_SEPARATION+MATRIX_X_GAP+2;
   public static final int MATRIX_Y_LABEL = MATRIX_Y+MATRIX_ELEMENT_HEIGHT/2;
+  
+  // Constants for the Log Button
+  public static final String LOGBUTTON_NAME = "LogData";
+  
+  public static final int LOG_XPOS = 200;
+  public static final int LOG_YPOS = 100;
+  
+  public static final int LOG_XSIZE = 20;
+  public static final int LOG_YSIZE = 20;
 }
 

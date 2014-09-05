@@ -71,6 +71,12 @@ public class KnobGUI extends Knob {
       }
       println("left while loop");
       
+  // Retrieves feedback from the servo potentiometers
+  public float getFeedback() {
+    if (arduino != null) {
+      return arduino.analogRead(pin);
+    } else {
+      return 0;
     }
     else if (currentServoValue > targetServoValue) {
       while(currentServoValue > targetServoValue) {
