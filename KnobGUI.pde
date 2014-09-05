@@ -91,63 +91,70 @@ public class KnobGUI extends Knob {
         }
       }
       println("left while loop");
-      
     }
     this.currentJointAngle = jointAngle;
     println("servo value now at: "+currentServoValue);
-  }
-      
-      
-      /*targetServoValue = map(jointAngle, Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
-      curPosServoValue = map(arduino.analogRead(pin), min, max, 0, 170);
-      
-      
-      if(cur_pos > targetServoValue) {
-        while(abs(cur_pos - target) > 10) {
-          arduino.servoWrite(pin, (int)cur_pos--);
-        }
-      } else if(cur_pos < target) {
-        while(abs(cur_pos - target) > 10) {
-          arduino.servoWrite(pin, (int)cur_pos++);
-        }        
-      }*/
-      
-      /*
+
+    /*targetServoValue = map(jointAngle, Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
+     curPosServoValue = map(arduino.analogRead(pin), min, max, 0, 170);
+     
+     
+     if(cur_pos > targetServoValue) {
+     while(abs(cur_pos - target) > 10) {
+     arduino.servoWrite(pin, (int)cur_pos--);
+     }
+     } else if(cur_pos < target) {
+     while(abs(cur_pos - target) > 10) {
+     arduino.servoWrite(pin, (int)cur_pos++);
+     }        
+     }*/
+
+    /*
       if ((servoID == 0)||(servoID == 1)||(servoID == 4)){
-        jointAngle = -jointAngle;        //joint angle between MIN and MAX.           -146 to 24.         0 -> 0        
-      }
-      /*println("current angle is "+this.getValue());
-      int currServoValue =  (int) map(this.getValue(), Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
-      int targetServoValue = (int) map(jointAngle, Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
-      int time = millis();
-      if (currServoValue < targetServoValue) {
-        while((currServoValue < targetServoValue)&&(millis()-time >=2000)) {
-          arduino.servoWrite(pin, currServoValue++);
-          time = millis();
-          println(time);
-          
-        }
-      }
-      
-      else{*/
-        /*
+     jointAngle = -jointAngle;        //joint angle between MIN and MAX.           -146 to 24.         0 -> 0        
+     }
+                            /*println("current angle is "+this.getValue());
+     int currServoValue =  (int) map(this.getValue(), Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
+     int targetServoValue = (int) map(jointAngle, Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
+     int time = millis();
+     if (currServoValue < targetServoValue) {
+     while((currServoValue < targetServoValue)&&(millis()-time >=2000)) {
+     arduino.servoWrite(pin, currServoValue++);
+     time = millis();
+     println(time);
+     
+     }
+     }
+     
+     else{*/
+    /*
         float servoValue = map(jointAngle, Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
-        arduino.servoWrite(pin, (int) servoValue);*/
-//  }
-//}
+     arduino.servoWrite(pin, (int) servoValue);*/
+    //  }
+    //}
+  }
+
+  // Retrieves feedback from the servo potentiometers
+  public float getFeedback() {
+    if (arduino != null) {
+      return arduino.analogRead(pin);
+    } else {
+      return 0;
+    }
+  }
 
   public void setTextBoxGUI(TextBoxGUI textbox) {
     this.textbox = textbox;
   }
-  
+
   public void setMatrixGUI(MatrixGUI matrixGUI) {
     this.matrixGUI = matrixGUI;
   }
 
   /*public void updateValue(float value) {
-    if (value >= minAngle && value <= maxAngle) {
-     this.setValue(value);
-    }
-  }*/
+   if (value >= minAngle && value <= maxAngle) {
+   this.setValue(value);
+   }
+   }*/
 }
 
