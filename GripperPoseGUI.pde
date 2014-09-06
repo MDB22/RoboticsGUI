@@ -26,3 +26,5 @@ public class GripperPoseGUI {
         poseTextArray.add(tf);
       }
     }
+  }
+}

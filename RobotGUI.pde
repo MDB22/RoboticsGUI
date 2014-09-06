@@ -47,13 +47,27 @@ public class RobotGUI{
 
     pushMatrix();              //setting up inertial frame
      
-      translate(1050,400,50);
+      translate(1050,500,50);
        scale(0.7,0.7,0.7);
       rotateX(radians(90));
+      
       pushMatrix();
-        rotate('z',matrixGUI.jointAngles[0]);    //joint 1
-        box(50,50,78);
-        translate(0,0,39);
+                        fill(255,0,0);
+                  drawArm('x',80,3,3);
+                  popMatrix();
+                  pushMatrix();
+                  fill(0,255,0);
+                  drawArm('y',3,80,3);
+                  popMatrix();
+                  pushMatrix();
+                  fill(0,0,255);
+                  drawArm('z',3,3,80);
+                  fill(255,255,255);
+      popMatrix();
+      drawArm('z',50,50,50);                    //Non-rotating part of the base
+      pushMatrix();
+        rotate('z',matrixGUI.jointAngles[0]);    //joint 1- Rotating Base
+        drawArm('z',50,50,28);
         pushMatrix();
           translate(11,0,0);    //a1
           rotate('x',90);  //alpha1

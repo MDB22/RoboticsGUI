@@ -38,8 +38,12 @@ public class ServoController {
     knob.setMatrixGUI(matrixGUI);
   }
 
-  public float getValue() {
-    return knob.getValue();
+  public int getID() {
+    return servoID;
+  }
+
+  public float getFeedback() {
+    return knob.getFeedback();
   }
 
   public void setJointAngle(float jointAngle) {

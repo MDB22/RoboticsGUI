@@ -60,7 +60,7 @@ public class KnobGUI extends Knob {
     
     if (currentServoValue < targetServoValue) {
       while(currentServoValue < targetServoValue) {
-        if (millis()-time >=100){
+        if (millis()-time >=1){
           currentServoValue++;
           if (arduino != null){
             arduino.servoWrite(pin, currentServoValue);
@@ -71,7 +71,7 @@ public class KnobGUI extends Knob {
     }
     else if (currentServoValue > targetServoValue) {
       while(currentServoValue > targetServoValue) {
-        if (millis()-time >=100){
+        if (millis()-time >=1){
           currentServoValue--;
           if (arduino != null){
             arduino.servoWrite(pin, currentServoValue);
@@ -117,23 +117,52 @@ public class KnobGUI extends Knob {
       
       else{*/
         /*
+
+    /*
+>>>>>>> f280e46dab5aac63c170e33b2812a5f1772d31f4
+      if ((servoID == 0)||(servoID == 1)||(servoID == 4)){
+     jointAngle = -jointAngle;        //joint angle between MIN and MAX.           -146 to 24.         0 -> 0        
+     }
+                            /*println("current angle is "+this.getValue());
+     int currServoValue =  (int) map(this.getValue(), Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
+     int targetServoValue = (int) map(jointAngle, Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
+     int time = millis();
+     if (currServoValue < targetServoValue) {
+     while((currServoValue < targetServoValue)&&(millis()-time >=2000)) {
+     arduino.servoWrite(pin, currServoValue++);
+     time = millis();
+     println(time);
+     
+     }
+     }
+     
+     else{*/
+    /*
         float servoValue = map(jointAngle, Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
-        arduino.servoWrite(pin, (int) servoValue);*/
-//  }
-//}
+     arduino.servoWrite(pin, (int) servoValue);*/
+    //  }
+    //}
+
+  // Retrieves feedback from the servo potentiometers
+  public float getFeedback() {
+    if (arduino != null) {
+      return arduino.analogRead(pin);
+    } else {
+      return 0;
+    }
+  }
 
   public void setTextBoxGUI(TextBoxGUI textbox) {
     this.textbox = textbox;
   }
-  
+
   public void setMatrixGUI(MatrixGUI matrixGUI) {
     this.matrixGUI = matrixGUI;
   }
 
   /*public void updateValue(float value) {
-    if (value >= minAngle && value <= maxAngle) {
-     this.setValue(value);
-    }
-  }*/
+   if (value >= minAngle && value <= maxAngle) {
+   this.setValue(value);
+   }
+   }*/
 }
-

@@ -1,5 +1,5 @@
 function [p,p_dot,p_ddot] = TrajectoryGeneration( p0, pf, p_dot0, p_dotf,...
-    p_ddot0, p_ddotf, tf, qf, poly )
+    p_ddot0, p_ddotf, tf, k, q0, qf, poly )
 %TRAJECTORYGENERATION Computes a trajectory from p0 to pf using the method
 %specified in poly.
 %   Detailed explanation goes here
@@ -40,29 +40,27 @@ end
 T = ForwardKinematics;
 R0i = T(1:3,1:3);
 
-% k remains constant for the whole rotation
-k = [1 1 1];
+% k remains constant for the whole rotation, but we should normalize
 k = k/norm(k);
 
-a0 = 0;
+% Read joint angles to get initial angle
+a0 = q0;
 a1 = 0;
-a2 = 3*(qf)/tf^2;
-a3 = -2*(qf)/tf^3;
+a2 = 3*(qf - q0)/tf^2;
+a3 = -2*(qf - q0)/tf^3;
 
 q = a0 + a1.*t + a2.*t.^2 + a3.*t.^3;
 
 for i = q
-    e1 = k(1)*sin(i/2);
-    e2 = k(2)*sin(i/2);
-    e3 = k(3)*sin(i/2);
-    e4 = cos(i/2);
+    e1 = k(1)*sind(i/2);
+    e2 = k(2)*sind(i/2);
+    e3 = k(3)*sind(i/2);
+    e4 = cosd(i/2);
     
     Re = [(1 - 2*e2^2 - 2*e3^2) 2*(e1*e2 - e3*e4) 2*(e1*e3 + e2*e4);...
         2*(e1*e2 + e3*e4) (1 - 2*e1^2 - 2*e3^2) 2*(e2*e3 - e1*e4);...
         2*(e1*e3 - e2*e4) 2*(e2*e3 + e1*e4) (1 - 2*e1^2 - 2*e2^2)];
 end
-
-save('Re.mat','Re');
 
 xi0 = zeros(3,3);
 xf0 = [ 1 0 0; 0 1 0; 0 0 1];
@@ -76,7 +74,6 @@ for i = 1:3
     v = xf2(:,i);
     xf2(:,i) = v/norm(v);
 end
-save('xf2.mat','xf2');
 
 
 %% Display computed trajectories
@@ -103,19 +100,22 @@ text(p0(1),p0(2),p0(3),'Start');
 plot3(pf(1),pf(2),pf(3),'.r','MarkerSize',20);
 text(pf(1),pf(2),pf(3),'End');
 plot3(p(1,:),p(2,:),p(3,:));
-axis([-1 5 -1 5 -1 5]);
+axis([-6 6 -6 6 -6 6]);
+xlabel('X');
+ylabel('Y');
+zlabel('Z');
 
 % X,Y,Z position with components U,V,W
 
 % Inertial Frame
-quiver3(xi0(:,1),xi0(:,2),xi0(:,3),xf0(:,1),xf0(:,2),xf0(:,3));
+bigQuiver(xi0(:,1),xi0(:,2),xi0(:,3),xf0(:,1),xf0(:,2),xf0(:,3),4);
 % Initial Frame
-quiver3(xi1(:,1),xi1(:,2),xi1(:,3),xf1(:,1),xf1(:,2),xf1(:,3));
+bigQuiver(xi1(:,1),xi1(:,2),xi1(:,3),xf1(:,1),xf1(:,2),xf1(:,3),2);
 % Rotation axis
-quiver3(0,0,0,k(1),k(2),k(3));
-quiver3(pf(1),pf(2),pf(3),k(1),k(2),k(3));
+bigQuiver(0,0,0,k(1),k(2),k(3),2);
+bigQuiver(pf(1),pf(2),pf(3),k(1),k(2),k(3),2);
 % Final Frame
-quiver3(xi2(:,1),xi2(:,2),xi2(:,3),xf2(:,1),xf2(:,2),xf2(:,3));
+bigQuiver(xi2(:,1),xi2(:,2),xi2(:,3),xf2(:,1),xf2(:,2),xf2(:,3),2);
 
 
 title('3D Trajectory');
