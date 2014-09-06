@@ -193,7 +193,7 @@ public class MatrixCalculator{
     float alpha4 = -90; float a4 = 0; float d5 = 3; float theta5 = q[5];
   
     //from arm4 to rotated end effector
-    float alpha5 = 90; float a5 = 4; float d6 = 64; float theta6 = q[6];
+    float alpha5 = 90; float a5 = 4; float d6 = 98; float theta6 = q[6];      //to end currently is 98, we previously had 64 for d6
     
     float[][] dhParameters = {{alpha0 , a0 , d1 , theta1},
                               {alpha1 , a1 , d2 , theta2},

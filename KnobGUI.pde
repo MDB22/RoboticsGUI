@@ -36,6 +36,8 @@ public class KnobGUI extends Knob {
     this.setNumberOfTickMarks(Constants.NUM_TICKS);
     this.setShowAngleRange(false);
     this.qCurrent = (int) home[servoID];
+    this.setServoAngle(5);
+    
 
     this.ID = servoID;
 
@@ -62,39 +64,55 @@ public class KnobGUI extends Knob {
   // When position commands are sent via the GUI (Knob or TextBox),
   // this method will smoothly move the joint to the desired angle
   public void setServoAngle(int qDesired) {
-    int targetValue = Constants.SERVO_DIR[ID]*qDesired + Constants.SERVO_OFFSET[ID];
-    int currentValue = Constants.SERVO_DIR[ID]*qCurrent + Constants.SERVO_OFFSET[ID];
+    /* Option 1: Trying to usee feedback, does funky stuff- always goes to home before moving to new location. 
+    
+    int currentFeedback = (int) getFeedback();
+    int currentFeedbackServoValue = (int) map(currentFeedback, Constants.MIN_FEEDBACK[ID], Constants.MAX_FEEDBACK[ID], 0, 170)-7;                 //taken from TextBoxGUI
+   
+    int targetValue = Constants.SERVO_DIR[ID]*qDesired*10/9 + Constants.SERVO_OFFSET[ID];
+    int currentValue = currentFeedbackServoValue;    //Constants.SERVO_DIR[ID]*qCurrent*10/9 + Constants.SERVO_OFFSET[ID];
+    println("currently at servoValue "+currentValue+", feedback indicates "+currentFeedbackServoValue);
+    */
+    
+    // Option 2: This section works but doesn't use feedback. Either use this section or previous one.
+    float scalingFactor = 10/9;
+    if ((ID == 1)&&(qDesired<0)){
+      scalingFactor = (float) 5/9;
+      println("scaling factor is "+scalingFactor);
+    }
+    int targetValue = (int) (Constants.SERVO_DIR[ID]*qDesired*scalingFactor + Constants.SERVO_OFFSET[ID]);
+    int currentValue = (int) (Constants.SERVO_DIR[ID]*qCurrent*scalingFactor + Constants.SERVO_OFFSET[ID]);
+    
+    //end of option 2
 
-    println("Setting servo "+ID+" to joint angle "+qDesired+". ");
-    println("corresponds to servoValue "+targetValue);
-    println("currently at servoValue "+currentValue);
+    println("Setting servo "+ID+" to joint angle "+qDesired+" = servoValue "+targetValue);
+    
 
     if (currentValue < targetValue) {
       while (currentValue < targetValue) {
-        if (millis()-time >=100) {
+        if (millis()-time >=10) {
           currentValue++;
           if (arduino != null) {
             arduino.servoWrite(pin, currentValue);
           }
           time = millis();
-          println("current servo value in while loop: "+currentValue);
-          println("current servo value: "+currentValue+", target: "+targetValue);
+          //println("current servo value in while loop: "+currentValue+", target: "+targetValue);
         }
       }
-      println("left while loop");
     } else if (currentValue > targetValue) {
       while (currentValue > targetValue) {
-        if (millis()-time >=100) {
+        if (millis()-time >=10) {
           currentValue--;
           if (arduino != null) {
             arduino.servoWrite(pin, currentValue);
           }
           time = millis();
-          println("current servo value in while loop: "+currentValue);
-          println("current servo value: "+currentValue+", target: "+targetValue);
+          //println("current servo value in while loop: "+currentValue+", target: "+targetValue);
         }
       }
-      println("left while loop");
+    }
+    else {
+      arduino.servoWrite(pin, currentValue);
     }
     this.qCurrent = qDesired;
     println("servo value now at: "+currentValue);

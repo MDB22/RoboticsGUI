@@ -48,8 +48,9 @@ public class TextAreaGUI extends Textarea {
         feedback += arduino.analogRead(feedback_pin);
       }
       feedback/=10;
+
       
-      int predictedServoValue = (int) map(feedback, minFeedback, maxFeedback, 0, 180); 
+      int predictedServoValue = (int) map(feedback, minFeedback, maxFeedback, 0, 170); 
       jointAngle = (predictedServoValue-Constants.SERVO_OFFSET[servoID])*Constants.SERVO_DIR[servoID];
     
       /*

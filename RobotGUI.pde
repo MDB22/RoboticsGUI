@@ -67,30 +67,83 @@ public class RobotGUI{
       drawArm('z',50,50,50);                    //Non-rotating part of the base
       pushMatrix();
         rotate('z',matrixGUI.jointAngles[0]);    //joint 1- Rotating Base
+
         drawArm('z',50,50,28);
         pushMatrix();
           translate(11,0,0);    //a1
           rotate('x',90);  //alpha1
-          rotate('z',matrixGUI.jointAngles[1]+90);  //theta2
-          drawArm('x',130,20,20); //a2
+          rotate('z',matrixGUI.jointAngles[1]+90);  //theta2  //joint 2- shoulder
+                        pushMatrix();
+                        fill(255,0,0);
+                  drawArm('x',80,3,3);
+                  popMatrix();
+                  pushMatrix();
+                  fill(0,255,0);
+                  drawArm('y',3,80,3);
+                  popMatrix();
+                  pushMatrix();
+                  fill(0,0,255);
+                  drawArm('z',3,3,80);
+                  fill(255,255,255);
+      popMatrix();
+          drawArm('x',130,20,20); //a2            
 
           pushMatrix();    //alpha2 = 0;
-            rotate('z',matrixGUI.jointAngles[2]+90);  //theta3
-            drawArm('y',10,-95,10);  //d3
+            rotate('z',matrixGUI.jointAngles[2]+90);  //theta3  //joint 3- elbow
+                          pushMatrix();
+                        fill(255,0,0);
+                  drawArm('x',80,3,3);
+                  popMatrix();
+                  pushMatrix();
+                  fill(0,255,0);
+                  drawArm('y',3,80,3);
+                  popMatrix();
+                  pushMatrix();
+                  fill(0,0,255);
+                  drawArm('z',3,3,80);
+                  fill(255,255,255);
+      popMatrix();
+            drawArm('y',10,-95,10);  //d3        
             
             pushMatrix();
               rotate('x',90);    //alpha3
-              rotate('z',matrixGUI.jointAngles[3]+90);  //theta4
-              drawArm('z',10,5,32);  //d4
+              rotate('z',matrixGUI.jointAngles[3]);  //theta4    //joint 4- wrist roll
+                            pushMatrix();
+                        fill(255,0,0);
+                  drawArm('x',80,3,3);
+                  popMatrix();
+                  pushMatrix();
+                  fill(0,255,0);
+                  drawArm('y',3,80,3);
+                  popMatrix();
+                  pushMatrix();
+                  fill(0,0,255);
+                  drawArm('z',3,3,80);
+                  fill(255,255,255);
+      popMatrix();
+              drawArm('z',10,5,32);  //d4        //
               
               pushMatrix();
                 rotate('x',-90);    //alpha4
-                rotate('z',matrixGUI.jointAngles[4]);
+                rotate('z',matrixGUI.jointAngles[4]);      //joint 5- wrist pitch
+                              pushMatrix();
+                        fill(255,0,0);
+                  drawArm('x',80,3,3);
+                  popMatrix();
+                  pushMatrix();
+                  fill(0,255,0);
+                  drawArm('y',3,80,3);
+                  popMatrix();
+                  pushMatrix();
+                  fill(0,0,255);
+                  drawArm('z',3,3,80);
+                  fill(255,255,255);
+      popMatrix();
                 drawArm('y',5,-64,10);
                 
                 pushMatrix();
                   rotate('x',90);
-                  rotate('z',matrixGUI.jointAngles[5]+90);
+                  rotate('z',matrixGUI.jointAngles[5]);  //joint 6- wrist yaw
                   drawArm('z',15,15,15);
                   
                   pushMatrix();

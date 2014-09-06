@@ -65,7 +65,7 @@ void setup() {
   frame.setResizable(true);
   frame.setTitle("Controller");
 
-  /*
+  
    //UNCOMMENT HERE
    // Prints out the available serial ports.
    println(Arduino.list());
@@ -77,7 +77,7 @@ void setup() {
    
    // Set the Arduino digital pins as inputs.
    arduino.pinMode(13, Arduino.SERVO);
-   */
+   
 
 
   // Read the home position from the text file
