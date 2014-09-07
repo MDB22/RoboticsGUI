@@ -28,10 +28,6 @@ public class ServoController {
     return servoID;
   }
 
-  public float getFeedback() {
-    return knob.getFeedback();
-  }
-
   public void setJointAngle(float jointAngle) {
     textbox.setValue(Float.toString(jointAngle));
     knob.setValue(jointAngle);

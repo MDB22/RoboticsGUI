@@ -25,11 +25,11 @@ public static class Constants {
   };
 
   public static final int MIN_ANGLE[] = {
-    -120,-90,-180,-120,-120,-120,-90    //-88, -146, -147, -90, -60, -90      //These are now just safety checks. Not used.
+    -120, -90, -180, -90, -90, -100, -90    //-88, -146, -147, -90, -60, -90      //These are now just safety checks. Not used.
   };
 
   public static final int MAX_ANGLE[] = {
-    120, 120, 30, 120, 120, 120      //82, 24, 23, 80, 110, 80
+    90, 90, 30, 90, 90, 90      //82, 24, 23, 80, 110, 80
   };
 
   public static final int SERVO_OFFSET[] = {    //when the sevrowrite gives these angles, corresponds to home position
@@ -129,7 +129,7 @@ public static class Constants {
   public static final int LOG_YSIZE = 20;
 
   // User position control constants
-  public static final int NUM_POSE_INPUTS = 6;
+  public static final int NUM_POSE_INPUTS = 7;
 
   public static final int POSE_INPUT_X = 400;
   public static final int POSE_INPUT_Y = 500;
@@ -138,7 +138,7 @@ public static class Constants {
   public static final int POSE_INPUT_HEIGHT = 20;
 
   public static final String POSE_INPUT_NAMES[] = {
-    "X", "Y", "Z", "Roll", "Pitch", "Yaw"
+    "X", "Y", "Z", "Roll", "Pitch", "Yaw", "Time"
   };
 }
 

@@ -17,14 +17,16 @@ function [trajectory] = TrajectoryGeneration(q, pf, qf, tf)
 clc;
 close all;
 
-T = ForwardKinematic(q);
+T = ForwardKinematics(q);
 
-RPY = @(roll,pitch,yaw)(rotz(yaw)*roty(pitch)*rotx(roll))
+RPY = @(roll,pitch,yaw)(rotz(yaw)*roty(pitch)*rotx(roll));
 
 %% Compute trajectory for end effector position
 % Assuming initial and final joint velocity (p_dot0, p_dotf) equal to 0,
 % generate a cubic polynomial that achieves the desired end position (pf)
 % from the initial position (p0)
+p0 = T(1:3,4);
+
 a0 = p0;
 a1 = zeros(size(a0));
 a2 = 3*(pf-p0)/tf^2;
@@ -32,7 +34,8 @@ a3 = -2*(pf-p0)/tf^3;
 
 %% Compute trajectory for end effector orientation
 % Gets the initial rotation matrix from the end effector to the inertial frame
-R0i = T(1:3,1:3);
+R0I = T(1:3,1:3);
+R0F = RPY(qf(1),qf(2),qf(3));
 
 % k remains constant for the whole rotation, but we should normalize
 k = [1 0 0];
@@ -43,8 +46,6 @@ a0 = q0;
 a1 = 0;
 a2 = 3*(qf - q0)/tf^2;
 a3 = -2*(qf - q0)/tf^3;
-
-q = a0 + a1.*t + a2.*t.^2 + a3.*t.^3;
 
 for i = q
     e1 = k(1)*sind(i/2);
@@ -101,7 +102,6 @@ ylabel('Y');
 zlabel('Z');
 
 % X,Y,Z position with components U,V,W
-
 % Inertial Frame
 bigQuiver(xi0(:,1),xi0(:,2),xi0(:,3),xf0(:,1),xf0(:,2),xf0(:,3),4);
 % Initial Frame
@@ -111,7 +111,6 @@ bigQuiver(0,0,0,k(1),k(2),k(3),2);
 bigQuiver(pf(1),pf(2),pf(3),k(1),k(2),k(3),2);
 % Final Frame
 bigQuiver(xi2(:,1),xi2(:,2),xi2(:,3),xf2(:,1),xf2(:,2),xf2(:,3),2);
-
 
 title('3D Trajectory');
 view(30,30);

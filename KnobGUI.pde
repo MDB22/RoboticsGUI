@@ -52,15 +52,6 @@ public class KnobGUI extends Knob {
     );
   }
 
-  // Retrieves feedback from the servo potentiometers
-  public float getFeedback() {
-    if (arduino != null) {
-      return arduino.analogRead(pin);
-    } else {
-      return 0;
-    }
-  }
-
   // When position commands are sent via the GUI (Knob or TextBox),
   // this method will smoothly move the joint to the desired angle
   public void setServoAngle(int qDesired) {

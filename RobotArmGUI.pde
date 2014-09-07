@@ -191,7 +191,7 @@ void addUserInput() {
   for (int i = 0; i < Constants.NUM_POSE_INPUTS; i++) {
     cp5.addTextfield(Constants.POSE_INPUT_NAMES[i], Constants.POSE_INPUT_X, Constants.POSE_INPUT_Y + 
       i*(Constants.POSE_INPUT_Y_SEP + Constants.POSE_INPUT_HEIGHT), Constants.POSE_INPUT_WIDTH, Constants.POSE_INPUT_HEIGHT)
-        .setText("0");
+      .setText("0");
   }
 }
 
@@ -219,8 +219,8 @@ void initMATLAB() {
     // Converts MATLAB data types to Java types and vice versa
     converter = new MatlabTypeConverter(comm.proxy);
 
-    for (ServoController s : servos) {
-      comm.proxy.setVariable("q" + s.name, s.getFeedback());
+    for (TextAreaGUI d : display) {
+      comm.proxy.setVariable("q" + d.getLabel(), float(d.getText()));
     }
   } 
   catch (Exception e) {
@@ -233,22 +233,28 @@ public void Start() {
   // Checks to see if desired pose is possible
   // CheckValues();
 
-  // Then sends current position to MATLAB workspace
-  for (int i = 0; i < Constants.NUM_POSE_INPUTS; i++) {
-    Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
-    try {
-      comm.proxy.setVariable(t.getLabel(), float(t.getText()));
-    } 
-    catch(Exception e) {
-      println("Bad MATLAB");
+  try {
+    // Then sends desired position to MATLAB workspace
+    for (int i = 0; i < Constants.NUM_POSE_INPUTS; i++) {
+      Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
+      comm.proxy.setVariable(t.getName(), float(t.getText()));
     }
+
+    // Then sends the current joint angles (given by feedback) to MATLAB workspace
+    for (TextAreaGUI d : display) {
+      comm.proxy.setVariable("q" + d.getLabel(), float(d.getText()));
+    }
+
+    // Enables motion
+    move = true;
+
+    // Then gets MATLAB to generate the desired path 
+    // based on the initial and final points
+    comm.proxy.eval("runTJ");
   }
-
-  // Enables motion
-  move = true;
-
-  // Then gets MATLAB to generate the desired path 
-  // based on the initial and final points
+  catch(Exception e) {
+    println("Bad MATLAB");
+  }
 }
 
 // Event handler for "Stop" button
@@ -278,8 +284,8 @@ public void SetHome() {
 
   int count = 0;
 
-  for (ServoController s : servos) {
-    stringData[count] = String.format("%3.2f", s.getFeedback());
+  for (TextAreaGUI d : display) {
+    stringData[count] = d.getText();
     count++;
   }
 
@@ -288,10 +294,10 @@ public void SetHome() {
 
 // Event handler for "Record" button
 public void Record() {
-  
+
   // Make sure that logging is enabled
   logData.setState(true);
-  
+
   // Collect the data and add it to our list
   float[] d = new float[Constants.NUM_SERVOS];
   for (TextAreaGUI t : display) {
