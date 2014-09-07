@@ -288,14 +288,15 @@ public void SetHome() {
 
 // Event handler for "Record" button
 public void Record() {
+  
+  // Make sure that logging is enabled
+  logData.setState(true);
+  
+  // Collect the data and add it to our list
   float[] d = new float[Constants.NUM_SERVOS];
-
-  for (ServoController s : servos) {
-    d[s.getID()] = s.getFeedback();
-    print(s.getFeedback() + " ");
+  for (TextAreaGUI t : display) {
+    d[t.getID()] = float(t.getText());
   }
-
-  println();
 
   data.add(d);
 }
