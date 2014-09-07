@@ -1,25 +1,25 @@
-function T = ForwardKinematics()
+function T = ForwardKinematics(q)
 
 n_joints = 6;
 T = eye(4);
 
 %From inertial to top of rotated base
-alpha0 = 0; a0 = 0; d1 = 78; theta1 = 0;
+alpha0 = 0; a0 = 0; d1 = 78; theta1 = q(1);
 
 %From base to bottom of arm1
-alpha1 = 90; a1 = 11; d2 = 0; theta2 = 90;
+alpha1 = 90; a1 = 11; d2 = 0; theta2 = q(2) + 90;
 
 %From bottom of arm 1 to arm1/2 joint (elbow)
-alpha2 = 0; a2 = 130; d3 = 18.5; theta3 = 90;
+alpha2 = 0; a2 = 130; d3 = 18.5; theta3 = q(3) + 90;
 
 %From elbow to rotated end of arm3
-alpha3 = 90; a3 = 0; d4 = 127; theta4 = 0;
+alpha3 = 90; a3 = 0; d4 = 127; theta4 = q(4);
 
 %From end of arm3 to bottom of arm4
-alpha4 = -90; a4 = 0; d5 = 3; theta5 = 0;
+alpha4 = -90; a4 = 0; d5 = 3; theta5 = q(5);
 
 %From arm4 to rotated end effector
-alpha5 = 90; a5 = 4; d6 = 64; theta6 = 0;
+alpha5 = 90; a5 = 4; d6 = 98; theta6 = q(6);
 
 alpha = [alpha0, alpha1, alpha2, alpha3, alpha4, alpha5];
 a = [a0, a1, a2, a3, a4, a5];

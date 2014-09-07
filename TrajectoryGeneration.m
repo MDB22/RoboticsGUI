@@ -1,23 +1,25 @@
-function [p,p_dot,p_ddot] = TrajectoryGeneration( p0, pf, p_dot0, p_dotf,...
-    p_ddot0, p_ddotf, tf, k, q0, qf, poly )
-%TRAJECTORYGENERATION Computes a trajectory from p0 to pf using the method
-%specified in poly.
-%   Detailed explanation goes here
+function [trajectory] = TrajectoryGeneration(q, pf, qf, tf)
+%TRAJECTORYGENERATION Computes a trajectory straightline trajectory to
+% the given pose from the current pose using a cubic polynomial.
+%
+% Given the joint angles of the robot (q), first computes the inital pose
+% of the robot using the ForwardKinematics function, then computes the
+% cubic polynomial that takes the robot from initial pose p0 and q0 to
+% the desired final pose pf and qf.
+%
+% This function assumes the the inital and final velocity and aceleration
+% are zero, so only uses the position to compute the polynomial.
+%
+% Once the polynomial has been calculated, it can then be interpolated
+% using time commands from the Processing sketch to generate the points
+% along the desired path.
 
 clc;
 close all;
 
-dt = 0.001;
+T = ForwardKinematic(q);
 
-% Ensure velocity constraint holds
-assert(all(p_dot0 == 0) && all(p_dotf == 0),...
-    'Velocities must be zero at end points');
-
-t = 0:dt:tf;
-
-p = zeros(size(p0,1),size(t,2));
-p_dot = p;
-p_ddot = p;
+RPY = @(roll,pitch,yaw)(rotz(yaw)*roty(pitch)*rotx(roll))
 
 %% Compute trajectory for end effector position
 % Assuming initial and final joint velocity (p_dot0, p_dotf) equal to 0,
@@ -28,19 +30,12 @@ a1 = zeros(size(a0));
 a2 = 3*(pf-p0)/tf^2;
 a3 = -2*(pf-p0)/tf^3;
 
-% Now compute trajectory for each dimension
-for i = 1:length(p0)
-    p(i,:) = a0(i) + a1(i).*t + a2(i).*t.^2 + a3(i).*t.^3;
-    p_dot(i,:) = a1(i) + 2.*a2(i)*t + 3*a3(i).*t.^2;
-    p_ddot(i,:) = 2*a2(i) + 6*a3(i).*t;
-end
-
 %% Compute trajectory for end effector orientation
 % Gets the initial rotation matrix from the end effector to the inertial frame
-T = ForwardKinematics;
 R0i = T(1:3,1:3);
 
 % k remains constant for the whole rotation, but we should normalize
+k = [1 0 0];
 k = k/norm(k);
 
 % Read joint angles to get initial angle
