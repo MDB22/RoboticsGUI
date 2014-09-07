@@ -1,4 +1,4 @@
-public class Matrix {
+public static class Matrix {
   int numRows;
   int numCols;
   float[][] theMatrix;
@@ -8,8 +8,6 @@ public class Matrix {
     this.numRows = numRows;
     this.numCols = numCols;
   }
-
-
 
   public Matrix(float[][] newMatrix) {
     theMatrix = newMatrix;
@@ -39,7 +37,7 @@ public class Matrix {
     return dimensions;
   }
 
-  public Matrix multiplyMatrix(Matrix a, Matrix b) {
+  public static Matrix multiplyMatrix(Matrix a, Matrix b) {
     Matrix cMatrix = new Matrix(a.numRows, b.numCols);
     float[][] c = new float[a.numRows][b.numCols];
     if (a.numCols == b.numRows) {

@@ -37,7 +37,7 @@ public class KnobGUI extends Knob {
     this.setShowAngleRange(false);
     this.qCurrent = (int) home[servoID];
     this.setServoAngle(5);
-    
+
 
     this.ID = servoID;
 
@@ -65,28 +65,28 @@ public class KnobGUI extends Knob {
   // this method will smoothly move the joint to the desired angle
   public void setServoAngle(int qDesired) {
     /* Option 1: Trying to usee feedback, does funky stuff- always goes to home before moving to new location. 
-    
-    int currentFeedback = (int) getFeedback();
-    int currentFeedbackServoValue = (int) map(currentFeedback, Constants.MIN_FEEDBACK[ID], Constants.MAX_FEEDBACK[ID], 0, 170)-7;                 //taken from TextBoxGUI
-   
-    int targetValue = Constants.SERVO_DIR[ID]*qDesired*10/9 + Constants.SERVO_OFFSET[ID];
-    int currentValue = currentFeedbackServoValue;    //Constants.SERVO_DIR[ID]*qCurrent*10/9 + Constants.SERVO_OFFSET[ID];
-    println("currently at servoValue "+currentValue+", feedback indicates "+currentFeedbackServoValue);
-    */
-    
+     
+     int currentFeedback = (int) getFeedback();
+     int currentFeedbackServoValue = (int) map(currentFeedback, Constants.MIN_FEEDBACK[ID], Constants.MAX_FEEDBACK[ID], 0, 170)-7;                 //taken from TextBoxGUI
+     
+     int targetValue = Constants.SERVO_DIR[ID]*qDesired*10/9 + Constants.SERVO_OFFSET[ID];
+     int currentValue = currentFeedbackServoValue;    //Constants.SERVO_DIR[ID]*qCurrent*10/9 + Constants.SERVO_OFFSET[ID];
+     println("currently at servoValue "+currentValue+", feedback indicates "+currentFeedbackServoValue);
+     */
+
     // Option 2: This section works but doesn't use feedback. Either use this section or previous one.
     float scalingFactor = 10/9;
-    if ((ID == 1)&&(qDesired<0)){
-      scalingFactor = (float) 5/9;
-      println("scaling factor is "+scalingFactor);
+    if ((ID == 1)&&(qDesired<0)) {
+      scalingFactor = 5.0/9.0;
+      //println("scaling factor is "+scalingFactor);
     }
     int targetValue = (int) (Constants.SERVO_DIR[ID]*qDesired*scalingFactor + Constants.SERVO_OFFSET[ID]);
     int currentValue = (int) (Constants.SERVO_DIR[ID]*qCurrent*scalingFactor + Constants.SERVO_OFFSET[ID]);
-    
+
     //end of option 2
 
-    println("Setting servo "+ID+" to joint angle "+qDesired+" = servoValue "+targetValue);
-    
+    //println("Setting servo "+ID+" to joint angle "+qDesired+" = servoValue "+targetValue);
+
 
     if (currentValue < targetValue) {
       while (currentValue < targetValue) {
@@ -110,12 +110,13 @@ public class KnobGUI extends Knob {
           //println("current servo value in while loop: "+currentValue+", target: "+targetValue);
         }
       }
-    }
-    else {
-      arduino.servoWrite(pin, currentValue);
+    } else {
+      if (arduino != null) {      
+        arduino.servoWrite(pin, currentValue);
+      }
     }
     this.qCurrent = qDesired;
-    println("servo value now at: "+currentValue);
+    //println("servo value now at: "+currentValue);
 
     /*targetValue = map(jointAngle, Constants.MIN_ANGLE[servoID], Constants.MAX_ANGLE[servoID], Constants.SERVOVAL_MIN, Constants.SERVOVAL_MAX);
      curPosServoValue = map(arduino.analogRead(pin), min, max, 0, 170);

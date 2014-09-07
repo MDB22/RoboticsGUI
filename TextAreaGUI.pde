@@ -52,11 +52,6 @@ public class TextAreaGUI extends Textarea {
       
       int predictedServoValue = (int) map(feedback, minFeedback, maxFeedback, 0, 170); 
       jointAngle = (predictedServoValue-Constants.SERVO_OFFSET[servoID])*Constants.SERVO_DIR[servoID];
-    
-      /*
-      This part is probably going to fail when the Arduino is plugged in,
-      where is the "time" variable initialised?
-      */
       if(millis() - time > Constants.DISP_UPDATE) {
         //println("Time is: " + time);
         this.setText(String.format("%3.2f", jointAngle));

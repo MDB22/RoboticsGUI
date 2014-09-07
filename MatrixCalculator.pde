@@ -1,10 +1,10 @@
 /* 
  This class performs the mathematics of calculating the transformation matrix.
 */
-public class MatrixCalculator{
-  Matrix matrix;    //an empty matrix used for methods that should be static.
+public class MatrixCalculator {
   
   Matrix dhParams;      //stores the Denavit Hartenberg parameters
+  
   Matrix T1;  //stores the current values for the T Matrices.
   Matrix T2;  //get transformation from one frame to the next.
   Matrix T3;  //Ti denotes transformation from frame i-1 to frame i
@@ -14,10 +14,6 @@ public class MatrixCalculator{
   
   Matrix JOmega;
   
-  public MatrixCalculator(){
-    matrix = new Matrix(1,1);
-  }
-  
   //Calculates the transformation matrix from the end effector frame to the inertial frame,
   //given the joint angles of the robot.
   public Matrix calcTMatrix()
@@ -25,11 +21,11 @@ public class MatrixCalculator{
     //updateTMatrices(jointAngles);
     
     //T = T1*T2*T3*T4*T5*T6;
-    Matrix T1_6 = matrix.multiplyMatrix(T1, T2);
-    T1_6 = matrix.multiplyMatrix(T1_6, T3);
-    T1_6 = matrix.multiplyMatrix(T1_6, T4);
-    T1_6 = matrix.multiplyMatrix(T1_6, T5);
-    T1_6 = matrix.multiplyMatrix(T1_6, T6);
+    Matrix T1_6 = Matrix.multiplyMatrix(T1, T2);
+    T1_6 = Matrix.multiplyMatrix(T1_6, T3);
+    T1_6 = Matrix.multiplyMatrix(T1_6, T4);
+    T1_6 = Matrix.multiplyMatrix(T1_6, T5);
+    T1_6 = Matrix.multiplyMatrix(T1_6, T6);
     
     return T1_6;
   }
@@ -67,9 +63,9 @@ public class MatrixCalculator{
     Matrix Dz = new Matrix(Dz_d);
 
     //T = Rx_alpha * Dx_a * Rz_theta * Dz_d;
-    Matrix T = matrix.multiplyMatrix(Rx,Dx);
-    T = matrix.multiplyMatrix(T,Rz);
-    T = matrix.multiplyMatrix(T,Dz);
+    Matrix T = Matrix.multiplyMatrix(Rx,Dx);
+    T = Matrix.multiplyMatrix(T,Rz);
+    T = Matrix.multiplyMatrix(T,Dz);
 
     return T;
   }
@@ -95,11 +91,11 @@ public class MatrixCalculator{
   }*/
   public Matrix calcJOmega(){
     
-    Matrix T1_2 = matrix.multiplyMatrix(T1, T2);
-    Matrix T1_3 = matrix.multiplyMatrix(T1_2, T3);
-    Matrix T1_4 = matrix.multiplyMatrix(T1_3, T4);
-    Matrix T1_5 = matrix.multiplyMatrix(T1_4, T5);
-    Matrix T1_6 = matrix.multiplyMatrix(T1_5, T6);
+    Matrix T1_2 = Matrix.multiplyMatrix(T1, T2);
+    Matrix T1_3 = Matrix.multiplyMatrix(T1_2, T3);
+    Matrix T1_4 = Matrix.multiplyMatrix(T1_3, T4);
+    Matrix T1_5 = Matrix.multiplyMatrix(T1_4, T5);
+    Matrix T1_6 = Matrix.multiplyMatrix(T1_5, T6);
     
     /*
     float[] z1 = {T1.getElement(0,2),T1.getElement(1,2),T1.getElement(2,2)};
@@ -121,16 +117,16 @@ public class MatrixCalculator{
   }
   
   public Matrix calcJV(){
-    Matrix T1_2 = matrix.multiplyMatrix(T1, T2);
-    Matrix T1_3 = matrix.multiplyMatrix(T1_2, T3);
-    Matrix T1_4 = matrix.multiplyMatrix(T1_3, T4);
-    Matrix T1_5 = matrix.multiplyMatrix(T1_4, T5);
-    Matrix T1_6 = matrix.multiplyMatrix(T1_5, T6);   
+    Matrix T1_2 = Matrix.multiplyMatrix(T1, T2);
+    Matrix T1_3 = Matrix.multiplyMatrix(T1_2, T3);
+    Matrix T1_4 = Matrix.multiplyMatrix(T1_3, T4);
+    Matrix T1_5 = Matrix.multiplyMatrix(T1_4, T5);
+    Matrix T1_6 = Matrix.multiplyMatrix(T1_5, T6);   
     
-    Matrix T5_6 = matrix.multiplyMatrix(T5, T6);
-    Matrix T4_6 = matrix.multiplyMatrix(T4, T5_6);
-    Matrix T3_6 = matrix.multiplyMatrix(T3, T4_6);
-    Matrix T2_6 = matrix.multiplyMatrix(T2, T3_6);
+    Matrix T5_6 = Matrix.multiplyMatrix(T5, T6);
+    Matrix T4_6 = Matrix.multiplyMatrix(T4, T5_6);
+    Matrix T3_6 = Matrix.multiplyMatrix(T3, T4_6);
+    Matrix T2_6 = Matrix.multiplyMatrix(T2, T3_6);
     
     
     float[] z1 = {T1.getElement(0,2),T1.getElement(1,2),T1.getElement(2,2)};

@@ -35,28 +35,33 @@ ControlP5 cp5;
 
 Arduino arduino;
 
+// GUI elements
 ArrayList<ServoController> servos = new ArrayList<ServoController>();
 ArrayList<TextAreaGUI> display = new ArrayList<TextAreaGUI>();
-ArrayList<float[]> data = new ArrayList<float[]>();
+MatrixGUI matrixDisplay;
 
+// Global variables for stored/logged data, and controls
+float home[] = new float[Constants.NUM_SERVOS];
+ArrayList<float[]> data = new ArrayList<float[]>();
 Toggle logData;
 
+// MATLAB control variables
 MatlabComm comm;
 MatlabTypeConverter converter;
 MatlabNumericArray array;
 
-MatrixGUI matrixDisplay;
+// Simulator
 RobotGUI robotDisplay;
-Matrix m;
 
-float home[] = new float[Constants.NUM_SERVOS];
-
-PFont font;
-
+// Colours for rendering
 color background = color(4, 79, 111);
 color outline = color(84, 145, 158);
 
+// Keeps track of timefor computations
 long time = 0;
+
+// Variable to indicate a motion command
+boolean move = false;
 
 void setup() {
   size(1200, 800, P3D);
@@ -65,7 +70,7 @@ void setup() {
   frame.setResizable(true);
   frame.setTitle("Controller");
 
-  
+  /*
    //UNCOMMENT HERE
    // Prints out the available serial ports.
    println(Arduino.list());
@@ -77,13 +82,10 @@ void setup() {
    
    // Set the Arduino digital pins as inputs.
    arduino.pinMode(13, Arduino.SERVO);
-   
-
+   */
 
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
-
-  font = createFont("ComicSans", 28);
 
   // Add buttons to UI
   addButtons();
@@ -99,23 +101,36 @@ void setup() {
 
   // Add servo controllers to UI
   addServos();
-  
-  Zero();
+
+  // Add user input commands
+  addUserInput();
+
+  // Add simulated robot
+  addRobotDisplay();
 
   // Allow for scrolling in knob controls
   addMouseWheelListener();
 
-  // Add simulated robot
-  addRobotDisplay();
-  
   // Initialise MATLAB communication
-  //initMATLAB();
+  initMATLAB();
 }
 
 void draw() {
   background(background);
   stroke(outline);
 
+  drawText();
+
+  // Update displays with feedback from servos
+  for (TextAreaGUI t : display) {
+    t.updateValue();
+  }
+
+  //rect(matrixDisplay.jointAngles[0],70,10,100);
+  robotDisplay.drawRobot();
+}
+
+void drawText() {
   // Title text
   textSize(25);
   textAlign(CENTER);
@@ -137,33 +152,6 @@ void draw() {
 
   text("JOmega", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+155);
   text("JV", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+225);
-
-  // Update displays with feedback from servos
-  for (TextAreaGUI t : display) {
-    t.updateValue();
-  }
-
-  //rect(matrixDisplay.jointAngles[0],70,10,100);
-  robotDisplay.drawRobot();
-}
-
-void initMATLAB() {
-  try {
-    // Set up new MATLAB proxy session
-    comm = new MatlabComm();
-    comm.proxy.eval("clc");
-    comm.proxy.eval("clear all");
-
-    // Converts MATLAB data types to Java types and vice versa
-    converter = new MatlabTypeConverter(comm.proxy);
-
-    for (ServoController s : servos) {
-      comm.proxy.setVariable(s.name, s.getFeedback());
-    }
-  } 
-  catch (Exception e) {
-    println("Exception caught!");
-  }
 }
 
 void addButtons() {
@@ -183,12 +171,6 @@ void addLogging() {
 
 void addDisplay() {
   for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {
-    /*display.add(new TextAreaGUI(arduino, Constants.ANALOG_PINS[i], cp5, 
-    Constants.CONTROLLER_NAMES[i], Constants.DISPLAY_X, 
-    Constants.DISPLAY_Y + i*Constants.TEXTBOX_SEPARATION, 
-    Constants.TEXTBOX_WIDTH, Constants.TEXTBOX_HEIGHT, 
-    Constants.MIN_FEEDBACK[i], Constants.MAX_FEEDBACK[i], home[i]));
-  }*/
     display.add(new TextAreaGUI(arduino, cp5, servoID));
   }
 }
@@ -202,6 +184,14 @@ void addMatrixDisplay() {
 void addServos() {
   for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {    
     servos.add(new ServoController(arduino, cp5, servoID, matrixDisplay));
+  }
+}
+
+void addUserInput() {
+  for (int i = 0; i < Constants.NUM_POSE_INPUTS; i++) {
+    cp5.addTextfield(Constants.POSE_INPUT_NAMES[i], Constants.POSE_INPUT_X, Constants.POSE_INPUT_Y + 
+      i*(Constants.POSE_INPUT_Y_SEP + Constants.POSE_INPUT_HEIGHT), Constants.POSE_INPUT_WIDTH, Constants.POSE_INPUT_HEIGHT)
+        .setText("0");
   }
 }
 
@@ -219,12 +209,51 @@ void addMouseWheelListener() {
   );
 }
 
+void initMATLAB() {
+  try {
+    // Set up new MATLAB proxy session
+    comm = new MatlabComm();
+    comm.proxy.eval("clc");
+    comm.proxy.eval("clear all");
+
+    // Converts MATLAB data types to Java types and vice versa
+    converter = new MatlabTypeConverter(comm.proxy);
+
+    for (ServoController s : servos) {
+      comm.proxy.setVariable("q" + s.name, s.getFeedback());
+    }
+  } 
+  catch (Exception e) {
+    println("Exception caught!");
+  }
+}
+
 // Event handler for "Start" button
 public void Start() {
+  // Checks to see if desired pose is possible
+  // CheckValues();
+
+  // Then sends current position to MATLAB workspace
+  for (int i = 0; i < Constants.NUM_POSE_INPUTS; i++) {
+    Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
+    try {
+      comm.proxy.setVariable(t.getLabel(), float(t.getText()));
+    } 
+    catch(Exception e) {
+      println("Bad MATLAB");
+    }
+  }
+
+  // Enables motion
+  move = true;
+
+  // Then gets MATLAB to generate the desired path 
+  // based on the initial and final points
 }
 
 // Event handler for "Stop" button
 public void Stop() {
+  move = false;
 }
 
 public void Zero() {
@@ -281,7 +310,7 @@ public void Exit() {
 
     for (float[] f : data) {
       stringData[count] = "";
-      
+
       for (int i = 0; i < f.length; i++) {
         stringData[count] += String.format("%3.2f", f[i]) + " ";
       }
