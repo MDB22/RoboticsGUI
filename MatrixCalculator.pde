@@ -109,63 +109,76 @@ public class MatrixCalculator {
                         {T1.getElement(1,2),T1_2.getElement(1,2),T1_3.getElement(1,2),T1_4.getElement(1,2),T1_5.getElement(1,2),T1_6.getElement(1,2)},
                         {T1.getElement(2,2),T1_2.getElement(2,2),T1_3.getElement(2,2),T1_4.getElement(2,2),T1_5.getElement(2,2),T1_6.getElement(2,2)}};
                         
-
-                        
     Matrix JOmegaMatrix = new Matrix(JOmega);
                         
     return JOmegaMatrix;
   }
   
   public Matrix calcJV(){
-    Matrix T1_2 = Matrix.multiplyMatrix(T1, T2);
+    //get combined transformation matrices
+    Matrix T1_2 = Matrix.multiplyMatrix(T1, T2);      //these transform from the inertial frame to the joint frame, for calculating z_i.
     Matrix T1_3 = Matrix.multiplyMatrix(T1_2, T3);
     Matrix T1_4 = Matrix.multiplyMatrix(T1_3, T4);
     Matrix T1_5 = Matrix.multiplyMatrix(T1_4, T5);
     Matrix T1_6 = Matrix.multiplyMatrix(T1_5, T6);   
     
-    Matrix T5_6 = Matrix.multiplyMatrix(T5, T6);
+    Matrix T5_6 = Matrix.multiplyMatrix(T5, T6);    //these transform from the joint frame to the end effector frame, for calculating p_i.
     Matrix T4_6 = Matrix.multiplyMatrix(T4, T5_6);
     Matrix T3_6 = Matrix.multiplyMatrix(T3, T4_6);
     Matrix T2_6 = Matrix.multiplyMatrix(T2, T3_6);
     
+    //obtain unit z vectors (axes of joint rotation) in the inertial frame.
+    float[][] z1_hat = {{T1.getElement(0,2)},{T1.getElement(1,2)},{T1.getElement(2,2)}};
+    float[][] z2_hat = {{T1_2.getElement(0,2)},{T1_2.getElement(1,2)},{T1_2.getElement(2,2)}};
+    float[][] z3_hat = {{T1_3.getElement(0,2)},{T1_3.getElement(1,2)},{T1_3.getElement(2,2)}};
+    float[][] z4_hat = {{T1_4.getElement(0,2)},{T1_4.getElement(1,2)},{T1_4.getElement(2,2)}};
+    float[][] z5_hat = {{T1_5.getElement(0,2)},{T1_5.getElement(1,2)},{T1_5.getElement(2,2)}};
+    float[][] z6_hat = {{T1_6.getElement(0,2)},{T1_6.getElement(1,2)},{T1_6.getElement(2,2)}};
     
-    float[] z1 = {T1.getElement(0,2),T1.getElement(1,2),T1.getElement(2,2)};
-    float[] z2 = {T1_2.getElement(0,2),T1_2.getElement(1,2),T1_2.getElement(2,2)};
-    float[] z3 = {T1_3.getElement(0,2),T1_3.getElement(1,2),T1_3.getElement(2,2)};
-    float[] z4 = {T1_4.getElement(0,2),T1_4.getElement(1,2),T1_4.getElement(2,2)};
-    float[] z5 = {T1_5.getElement(0,2),T1_5.getElement(1,2),T1_5.getElement(2,2)};
-    float[] z6 = {T1_6.getElement(0,2),T1_6.getElement(1,2),T1_6.getElement(2,2)};
+    Matrix z1 = new Matrix(z1_hat);
+    Matrix z2 = new Matrix(z2_hat);
+    Matrix z3 = new Matrix(z3_hat);
+    Matrix z4 = new Matrix(z4_hat);
+    Matrix z5 = new Matrix(z5_hat);
+    Matrix z6 = new Matrix(z6_hat);
     
-        /*T = */
-    float[] p0_e = {T1_6.getElement(0,3), T1_6.getElement(1,3), T1_6.getElement(2,3)};
-    float[] p1_e = {T2_6.getElement(0,3), T2_6.getElement(1,3), T2_6.getElement(2,3)};
-    float[] p2_e = {T3_6.getElement(0,3), T3_6.getElement(1,3), T3_6.getElement(2,3)};
-    float[] p3_e = {T4_6.getElement(0,3), T4_6.getElement(1,3), T4_6.getElement(2,3)};
-    float[] p4_e = {T5_6.getElement(0,3), T5_6.getElement(1,3), T5_6.getElement(2,3)};
-    float[] p5_e = {T6.getElement(0,3), T6.getElement(1,3), T6.getElement(2,3)};
+    // Get vector from joint i to end effector in frame i, pad with a 0 to get only the rotation
+    float[][] p1e = {{T2_6.getElement(0,3)}, {T2_6.getElement(1,3)}, {T2_6.getElement(2,3)},{0}};
+    float[][] p2e = {{T3_6.getElement(0,3)}, {T3_6.getElement(1,3)}, {T3_6.getElement(2,3)},{0}};
+    float[][] p3e = {{T4_6.getElement(0,3)}, {T4_6.getElement(1,3)}, {T4_6.getElement(2,3)},{0}};
+    float[][] p4e = {{T5_6.getElement(0,3)}, {T5_6.getElement(1,3)}, {T5_6.getElement(2,3)},{0}};
+    float[][] p5e = {{T6.getElement(0,3)}, {T6.getElement(1,3)}, {T6.getElement(2,3)},{0}};
+    float[][] p6e = {{0},{0},{0},{0}};
+
+    Matrix p1_e = new Matrix(p1e);
+    Matrix p2_e = new Matrix(p2e);
+    Matrix p3_e = new Matrix(p3e);
+    Matrix p4_e = new Matrix(p4e);
+    Matrix p5_e = new Matrix(p5e);
+    Matrix p6_e = new Matrix(p6e);
     
-    float[] jv1 = calcCrossProduct(z1,p0_e);
-    float[] jv2 = calcCrossProduct(z2,p1_e);
-    float[] jv3 = calcCrossProduct(z3,p2_e);
-    float[] jv4 = calcCrossProduct(z4,p3_e);
-    float[] jv5 = calcCrossProduct(z5,p4_e);
-    float[] jv6 = calcCrossProduct(z6,p5_e);
-    
-    float[][] JV = {{jv1[0],jv2[0],jv3[0],jv4[0],jv5[0],jv6[0]},
-                    {jv1[1],jv2[1],jv3[1],jv4[1],jv5[1],jv6[1]},
-                    {jv1[2],jv2[2],jv3[2],jv4[2],jv5[2],jv6[2]}};
-                    
-    Matrix JVMatrix = new Matrix(JV);
+    //want to get these in the inertial frame. Multiply with the appropriate T matrix.
+    p1_e = Matrix.multiplyMatrix(T1,p1_e);
+    p2_e = Matrix.multiplyMatrix(T1_2,p2_e);
+    p3_e = Matrix.multiplyMatrix(T1_3,p3_e);
+    p4_e = Matrix.multiplyMatrix(T1_4,p4_e);
+    p5_e = Matrix.multiplyMatrix(T1_5,p5_e);
+    p6_e = Matrix.multiplyMatrix(T1_6,p6_e);
+
+    Matrix jv1 = Matrix.calcCrossProduct(z1,p1_e);    //the fact that p0_e has the padding doesn't matter- the cross product calculator ignores the last element.
+    Matrix jv2 = Matrix.calcCrossProduct(z2,p2_e);
+    Matrix jv3 = Matrix.calcCrossProduct(z3,p3_e);
+    Matrix jv4 = Matrix.calcCrossProduct(z4,p4_e);
+    Matrix jv5 = Matrix.calcCrossProduct(z5,p5_e);
+    Matrix jv6 = Matrix.calcCrossProduct(z6,p6_e);
+
+    Matrix[] JV = {jv1, jv2, jv3, jv4, jv5, jv6};
+    Matrix JVMatrix = Matrix.combineVectors(JV);
+
     return JVMatrix;
   }
   
-    public float[] calcCrossProduct(float[] a, float[] b){
-    float[] c = {0,0,0};
-    c[0] = a[1]*b[2]-a[2]*b[1];
-    c[1] = a[0]*b[2]-a[2]*b[0];
-    c[2] = a[0]*b[1]-a[1]*b[0];
-    return c;
-  }
+
     
   
   public float[][] getDHParameters(float[] jointAngles){

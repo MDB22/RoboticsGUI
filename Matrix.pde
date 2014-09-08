@@ -30,8 +30,8 @@ public static class Matrix {
     this.theMatrix[row][col]=val;
   }
 
-  public float[] getSize() {
-    float[] dimensions = {
+  public int[] getSize() {
+    int[] dimensions = {
       numRows, numCols
     };
     return dimensions;
@@ -272,6 +272,30 @@ public static class Matrix {
     }
     return scaledMatrix;
   }
+  
+  public static Matrix calcCrossProduct(Matrix a, Matrix b){
+    float[][] c = {{0},{0},{0}};
+    c[0][0] = a.getElement(1, 0)*b.getElement(2, 0)-a.getElement(2, 0)*b.getElement(1, 0);
+    c[1][0] = -a.getElement(0, 0)*b.getElement(2, 0)+a.getElement(2, 0)*b.getElement(0, 0);
+    c[2][0] = a.getElement(0, 0)*b.getElement(1, 0)-a.getElement(1, 0)*b.getElement(0, 0);
+    
+    Matrix cMatrix = new Matrix(c);
+    return cMatrix;
+  }
+  
+  public static Matrix combineVectors(Matrix[] vectors){
+    int numVectors = vectors.length;
+    int sizeVector = (vectors[0]).getSize()[0];
+    float[][] m = new float[sizeVector][numVectors];
+    for (int row = 0; row < sizeVector; row++){
+      for (int col = 0; col < numVectors; col++){
+        m[row][col] = vectors[col].getElement(row,0);
+      }
+    }
+    Matrix mMatrix = new Matrix(m);
+    return mMatrix;
+  }
+    
 
 
   public float[][] getMatrix() {

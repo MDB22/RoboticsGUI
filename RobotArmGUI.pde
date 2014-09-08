@@ -70,7 +70,7 @@ void setup() {
   frame.setResizable(true);
   frame.setTitle("Controller");
 
-  
+  /*
    //UNCOMMENT HERE
    // Prints out the available serial ports.
    println(Arduino.list());
@@ -78,12 +78,12 @@ void setup() {
    // Modify this line, by changing the "0" to the index of the serial
    // port corresponding to your Arduino board (as it appears in the list
    // printed by the line above).
-   arduino = new Arduino(this, "COM20", 57600);
+   arduino = new Arduino(this, "COM4", 57600);
    
    // Set the Arduino digital pins as inputs.
    arduino.pinMode(13, Arduino.SERVO);
    
-
+*/
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
 
@@ -179,7 +179,7 @@ void addDisplay() {
 void addMatrixDisplay() {
   matrixDisplay = new MatrixGUI(cp5, Constants.MATRIX_X, Constants.MATRIX_Y, 
   Constants.MATRIX_X_SEPARATION, Constants.MATRIX_Y_SEPARATION, 
-  Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_ELEMENT_HEIGHT);
+  Constants.MATRIX_ELEMENT_WIDTH+5, Constants.MATRIX_ELEMENT_HEIGHT);
 }
 
 void addServos() {
