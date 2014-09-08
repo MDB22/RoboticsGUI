@@ -12,9 +12,12 @@ public class TextAreaGUI extends Textarea {
   int minFeedback, maxFeedback;
   int time = 0;
   int ID;
+  float[] feedbackArray = new float[Constants.NUM_TO_AVERAGE];
 
   float feedback;
+  float sum = 0;
   float jointAngle;
+  int count = 0;
   
   String label;
 
@@ -52,13 +55,31 @@ public class TextAreaGUI extends Textarea {
   public void updateValue() {
     // Perform analog read of pin and display servo position
     if (arduino != null) {
-      feedback = readPin(10);
+      
+        if (count == Constants.NUM_TO_AVERAGE){
+          count=0;
+        }
 
-      int predictedServoValue = (int) map(feedback, minFeedback, maxFeedback, 0, 170); 
+        feedbackArray[count] = arduino.analogRead(feedback_pin);
+//        println("feedback" +feedbackArray[count] + " count "+ count);
+        for(int i = 0; i<Constants.NUM_TO_AVERAGE; i++) {
+          sum+= feedbackArray[i];
+        }
+        count ++;
+        sum/=Constants.NUM_TO_AVERAGE;
+
+      
+          
+
+      float predictedServoValue = map(sum, minFeedback, maxFeedback, 0, 170); 
       jointAngle = (predictedServoValue-Constants.SERVO_OFFSET[ID])*Constants.SERVO_DIR[ID];
+//      if(ID == 0) {
+//        println(sum + "\t" + jointAngle + "\t\t" + predictedServoValue);
+//      }
       if (millis() - time > Constants.DISP_UPDATE) {
         //println("Time is: " + time);
-        this.setText(String.format("%3.2f", jointAngle));
+        //this.setText(String.format("%3.2f", jointAngle));
+        this.setText(String.format("%3.2f", sum));
         time = millis();
         //println("feedback value is "+feedback +" for feedback pin "+feedback_pin);
         //println("servoValue angle is "+predictedServoValue);
@@ -66,14 +87,56 @@ public class TextAreaGUI extends Textarea {
       }
     }
   }
+  
 
   private float readPin(int n) {
     float f = 0;
+    float g = 0;
+    float sum = 0;
     // Perform mean filtering on the analog input to smooth data
     for (int i=0; i<n; i++) {
-      f += arduino.analogRead(feedback_pin);
+      f = arduino.analogRead(feedback_pin);
+      print(f + ", ");
+      sum+=f;
     }
+    g = arduino.analogRead(feedback_pin);
+    println();
+    println(g + ", ");
+    
     return f/n;
   }
+  
+  private float readPinMedian(int n) {
+    float[] f = new float[n];
+    println("before:");
+    for (int i=0; i<n; i++) {
+      f[i] = arduino.analogRead(feedback_pin);
+      print(f[i] + ", ");
+    }
+
+    int j;
+    boolean flag = true;   // set flag to true to begin first pass
+    float temp;   //holding variable
+
+     while (flag)     {
+            flag= false;    //set flag to false awaiting a possible swap
+            for(j=0; j<n-1; j++){
+                   if (f[j] < f[j+1]) {   // change to > for ascending sort
+                           temp = f[j];                //swap elements
+                           f[j] = f[j+1];
+                           f[j+1] = temp;
+                           flag = true;              //shows a swap occurred  
+                  } 
+            } 
+      } 
+      for(int i = 0; i < n; i++) {
+          print(f[i] + ", "); 
+      }
+      println();
+      return f[n/2];
+  }
+    
+    
+    
 }
 

@@ -36,6 +36,7 @@ public class KnobGUI extends Knob {
     this.setNumberOfTickMarks(Constants.NUM_TICKS);
     this.setShowAngleRange(false);
     this.qCurrent = (int) home[servoID];
+    //this.qCurrent = -1;
     this.setServoAngle(5);
 
 
@@ -76,7 +77,7 @@ public class KnobGUI extends Knob {
 
     //end of option 2
 
-    //println("Setting servo "+ID+" to joint angle "+qDesired+" = servoValue "+targetValue);
+    println("Setting servo "+ID+" to joint angle "+qDesired+" = servoValue "+targetValue);
 
 
     if (currentValue < targetValue) {

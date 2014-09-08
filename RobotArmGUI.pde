@@ -70,7 +70,7 @@ void setup() {
   frame.setResizable(true);
   frame.setTitle("Controller");
 
-  /*
+  
    //UNCOMMENT HERE
    // Prints out the available serial ports.
    println(Arduino.list());
@@ -78,11 +78,11 @@ void setup() {
    // Modify this line, by changing the "0" to the index of the serial
    // port corresponding to your Arduino board (as it appears in the list
    // printed by the line above).
-   arduino = new Arduino(this, "COM4", 57600);
+   arduino = new Arduino(this, "COM20", 57600);
    
    // Set the Arduino digital pins as inputs.
    arduino.pinMode(13, Arduino.SERVO);
-   */
+   
 
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
@@ -112,7 +112,7 @@ void setup() {
   addMouseWheelListener();
 
   // Initialise MATLAB communication
-  initMATLAB();
+  //initMATLAB();
 }
 
 void draw() {
@@ -124,6 +124,7 @@ void draw() {
   // Update displays with feedback from servos
   for (TextAreaGUI t : display) {
     t.updateValue();
+
   }
 
   //rect(matrixDisplay.jointAngles[0],70,10,100);

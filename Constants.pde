@@ -25,11 +25,11 @@ public static class Constants {
   };
 
   public static final int MIN_ANGLE[] = {
-    -120, -90, -180, -90, -90, -100, -90    //-88, -146, -147, -90, -60, -90      //These are now just safety checks. Not used.
+    -120, -120, -180, -120, -120, -100, -120    //-88, -146, -147, -90, -60, -90      //These are now just safety checks. Not used.
   };
 
   public static final int MAX_ANGLE[] = {
-    90, 90, 30, 90, 90, 90      //82, 24, 23, 80, 110, 80
+    140, 140, 30, 140, 140, 140      //82, 24, 23, 80, 110, 80
   };
 
   public static final int SERVO_OFFSET[] = {    //when the sevrowrite gives these angles, corresponds to home position
@@ -46,6 +46,8 @@ public static class Constants {
   public static final float INITIAL_JOINT_ANGLES[] = {
     0, 0, 0, 0, 0, 0
   };
+
+  public static final int NUM_TO_AVERAGE = 40;
 
   public static final int TEXTBOX_SEPARATION = 40;
 
