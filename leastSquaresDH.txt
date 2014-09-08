@@ -1,0 +1,51 @@
+The X matrix is:
+ 
+  +-   -+ 
+  |  x  | 
+  |     | 
+  |  y  | 
+  |     | 
+  |  z  | 
+  +-   -+
+The A matrix is:
+ 
+  +-                                                                                                                                                                                                                                                                                                                                                       -+ 
+  |  -sin(t1 + t2),  sin(t1 + t2) sin(t3),    cos(t6) #4 + cos(t3 + t4) sin(t1 + t2) sin(t6),   d3 cos(t1 + t2) + d4 cos(t1 + t2) - a1 sin(t1 + t2) + d6 #3 - d5 cos(t3 + t4) sin(t1 + t2) + a2 sin(t1 + t2) sin(t3) + a5 cos(t6) #4 + a5 cos(t3 + t4) sin(t1 + t2) sin(t6), cos(t1 + t2), cos(t1 + t2), -cos(t3 + t4) sin(t1 + t2),           #3           | 
+  |                                                                                                                                                                                                                                                                                                                                                         | 
+  |   cos(t1 + t2), -cos(t1 + t2) sin(t3),    cos(t6) #2 - cos(t1 + t2) cos(t3 + t4) sin(t6),   a1 cos(t1 + t2) + d3 sin(t1 + t2) + d4 sin(t1 + t2) + d6 #5 + d5 cos(t1 + t2) cos(t3 + t4) - a2 cos(t1 + t2) sin(t3) + a5 cos(t6) #2 - a5 cos(t1 + t2) cos(t3 + t4) sin(t6), sin(t1 + t2), sin(t1 + t2),  cos(t1 + t2) cos(t3 + t4),           #5           | 
+  |                                                                                                                                                                                                                                                                                                                                                         | 
+  |        #1,             cos(t3),        cos(t3 + t4) cos(t5) cos(t6) - sin(t3 + t4) sin(t6),                                                                                      1,                                                                                           #1,           #1,             sin(t3 + t4),        -cos(t3 + t4) sin(t5)  | 
+  +-                                                                                                                                                                                                                                                                                                                                                       -+ 
+   
+  where 
+   
+                                               a5 cos(t3 + t4) cos(t5 + t6)                                                       a5 cos(t5 - t6) cos(t3 + t4) 
+     #1 == d1 + d5 sin(t3 + t4) + a2 cos(t3) + ---------------------------- - d6 cos(t3 + t4) sin(t5) - a5 sin(t3 + t4) sin(t6) + ---------------------------- 
+                                                            2                                                                                  2 
+   
+     #2 == sin(t1 + t2) sin(t5) - cos(t1 + t2) sin(t3 + t4) cos(t5) 
+   
+     #3 == cos(t1 + t2) cos(t5) - sin(t1 + t2) sin(t3 + t4) sin(t5) 
+   
+     #4 == cos(t1 + t2) sin(t5) + sin(t1 + t2) sin(t3 + t4) cos(t5) 
+   
+     #5 == sin(t1 + t2) cos(t5) + cos(t1 + t2) sin(t3 + t4) sin(t5)
+The B matrix is:
+ 
+  +-    -+ 
+  |  a1  | 
+  |      | 
+  |  a2  | 
+  |      | 
+  |  a5  | 
+  |      | 
+  |  d1  | 
+  |      | 
+  |  d3  | 
+  |      | 
+  |  d4  | 
+  |      | 
+  |  d5  | 
+  |      | 
+  |  d6  | 
+  +-    -+
