@@ -25,7 +25,7 @@ public static class Matrix {
     float element = theMatrix[row][col];
     return element;
   }
-  
+
   public void setElement(int row, int col, float val) {
     this.theMatrix[row][col]=val;
   }
@@ -174,44 +174,44 @@ public static class Matrix {
     float[][] Aarray = {
       {
         this.getElement(0, 0), this.getElement(0, 1)
-      }
-      , 
+        }
+        , 
       {
         this.getElement(1, 0), this.getElement(1, 1)
-      }
-    };
+        }
+      };
 
     float[][] Barray = {
       {
         this.getElement(0, 2), this.getElement(0, 3)
-      }
-      , 
+        }
+        , 
       {
         this.getElement(1, 2), this.getElement(1, 3)
-      }
-    };
+        }
+      };
 
     float[][] Carray = {
       {
         this.getElement(2, 0), this.getElement(2, 1)
-      }
-      , 
+        }
+        , 
       {
         this.getElement(3, 0), this.getElement(3, 1)
-      }
-    };
+        }
+      };
 
     float[][] Darray = {
       {
         this.getElement(2, 2), this.getElement(2, 3)
-      }
-      , 
+        }
+        , 
       {
         this.getElement(3, 2), this.getElement(3, 3)
-      }
-    };
+        }
+      };
 
-    Matrix A = new Matrix(Aarray);
+      Matrix A = new Matrix(Aarray);
     Matrix B = new Matrix(Barray);
     Matrix C = new Matrix(Carray);
     Matrix D = new Matrix(Darray);
@@ -236,22 +236,22 @@ public static class Matrix {
     float[][] newmatrixarray = {
       {
         m11.getElement(0, 0), m11.getElement(0, 1), m12.getElement(0, 0), m12.getElement(0, 1)
-      }
-      , 
+        }
+        , 
       {
         m11.getElement(1, 0), m11.getElement(1, 1), m12.getElement(1, 0), m12.getElement(1, 1)
-      }
-      , 
+        }
+        , 
       {
         m21.getElement(0, 0), m21.getElement(0, 1), m22.getElement(0, 0), m22.getElement(0, 1)
-      }
-      , 
+        }
+        , 
       {
         m21.getElement(1, 0), m21.getElement(1, 1), m22.getElement(1, 0), m22.getElement(1, 1)
-      }
-    };
+        }
+      };
 
-    Matrix inverse = new Matrix(newmatrixarray);
+      Matrix inverse = new Matrix(newmatrixarray);
     return inverse;
   }
 
@@ -272,45 +272,57 @@ public static class Matrix {
     }
     return scaledMatrix;
   }
-  
-  public static Matrix calcCrossProduct(Matrix a, Matrix b){
-    float[][] c = {{0},{0},{0}};
+
+  public static Matrix calcCrossProduct(Matrix a, Matrix b) {
+    float[][] c = {
+      {
+        0
+      }
+      , {
+        0
+      }
+      , {
+        0
+      }
+    };
     c[0][0] = a.getElement(1, 0)*b.getElement(2, 0)-a.getElement(2, 0)*b.getElement(1, 0);
     c[1][0] = -a.getElement(0, 0)*b.getElement(2, 0)+a.getElement(2, 0)*b.getElement(0, 0);
     c[2][0] = a.getElement(0, 0)*b.getElement(1, 0)-a.getElement(1, 0)*b.getElement(0, 0);
-    
+
     Matrix cMatrix = new Matrix(c);
     return cMatrix;
   }
-  
-  public static Matrix combineVectors(Matrix[] vectors){
+
+  public static Matrix combineVectors(Matrix[] vectors) {
     int numVectors = vectors.length;
     int sizeVector = (vectors[0]).getSize()[0];
     float[][] m = new float[sizeVector][numVectors];
-    for (int row = 0; row < sizeVector; row++){
-      for (int col = 0; col < numVectors; col++){
-        m[row][col] = vectors[col].getElement(row,0);
+    for (int row = 0; row < sizeVector; row++) {
+      for (int col = 0; col < numVectors; col++) {
+        m[row][col] = vectors[col].getElement(row, 0);
       }
     }
     Matrix mMatrix = new Matrix(m);
     return mMatrix;
   }
-    
+
 
 
   public float[][] getMatrix() {
     return theMatrix;
   }
-  
-  public void printMatrix(String name) {
-    println(name);
+
+  public String toString() {
+    String s = "";
     for (int row=0; row<numRows; row++) {
       for (int col=0; col<numCols; col++) {
-        print(String.format("%3.4f ", this.getElement(row, col)));
+        s += String.format("%3.4f ", this.getElement(row, col));
       }
-      print("\n");
+      s += "\n";
     }
-    print("\n");
+    s += "\n";
+
+    return s;
   }
 }
 

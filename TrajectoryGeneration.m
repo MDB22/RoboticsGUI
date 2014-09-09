@@ -1,4 +1,4 @@
-function [trajectory] = TrajectoryGeneration(q, pf, qf, tf)
+function [x,y,z,k,theta,RFI] = TrajectoryGeneration(q, pf, qf, tf)
 %TRAJECTORYGENERATION Computes a trajectory straightline trajectory to
 % the given pose from the current pose using a cubic polynomial.
 %
@@ -13,9 +13,6 @@ function [trajectory] = TrajectoryGeneration(q, pf, qf, tf)
 % Once the polynomial has been calculated, it can then be interpolated
 % using time commands from the Processing sketch to generate the points
 % along the desired path.
-
-clc;
-close all;
 
 T = ForwardKinematics(q);
 
@@ -32,22 +29,35 @@ a1 = zeros(size(a0));
 a2 = 3*(pf-p0)/tf^2;
 a3 = -2*(pf-p0)/tf^3;
 
+x = @(t)(a0(1) + a1(1)*t + a2(1)*t.^2 + a3(1)*t.^3);
+y = @(t)(a0(2) + a1(2)*t + a2(2)*t.^2 + a3(2)*t.^3);
+z = @(t)(a0(3) + a1(3)*t + a2(3)*t.^2 + a3(3)*t.^3);
+
 %% Compute trajectory for end effector orientation
 % Gets the initial rotation matrix from the end effector to the inertial frame
-R0I = T(1:3,1:3);
-R0F = RPY(qf(1),qf(2),qf(3));
+RI0 = T(1:3,1:3)
+RF0 = RPY(qf(1),qf(2),qf(3))
+RFI = RF0*RI0';
 
-% k remains constant for the whole rotation, but we should normalize
-k = [1 0 0];
-k = k/norm(k);
+% Calculate the total rotation, and the axis we're rotating around
+theta0 = 0;
+thetaf = 2*acos(.5*sqrt(1+RFI(1,1)+RFI(2,2)+RFI(3,3)))
+k = [RFI(3,2) - RFI(2,3);...
+    RFI(1,3) - RFI(3,1);...
+    RFI(2,1) - RFI(1,2)];
+k = k./(2*sin(thetaf));
+k = k./norm(k);
 
-% Read joint angles to get initial angle
-a0 = q0;
+% Assume we start at rotation theta0 around our axis, and we wish to move
+% to thetaf in time tf
+a0 = theta0;
 a1 = 0;
-a2 = 3*(qf - q0)/tf^2;
-a3 = -2*(qf - q0)/tf^3;
+a2 = 3*(thetaf - theta0)/tf^2;
+a3 = -2*(thetaf - theta0)/tf^3;
 
-for i = q
+theta = @(t)(a0 + a1*t + a2*t.^2 + a3*t.^3);
+
+for i = theta0:.01:thetaf
     e1 = k(1)*sind(i/2);
     e2 = k(2)*sind(i/2);
     e3 = k(3)*sind(i/2);
@@ -62,58 +72,14 @@ xi0 = zeros(3,3);
 xf0 = [ 1 0 0; 0 1 0; 0 0 1];
 
 xi1 = xi0;
-xf1 = R0i;
+xf1 = RI0;
 
 xi2 = [pf; pf; pf];
-xf2 = R0i * Re;
+xf2 = RI0 * Re;
 for i = 1:3
     v = xf2(:,i);
     xf2(:,i) = v/norm(v);
 end
 
-
-%% Display computed trajectories
-figure;
-plot(t,p);
-title('End Effector Position');
-legend('x','y','z');
-figure;
-plot(t,p_dot);
-title('End Effector Velocity');
-legend('x','y','z');
-figure;
-plot(t,p_ddot);
-title('End Effector Acceleration');
-legend('x','y','z');
-figure;
-plot(t,q);
-title('End Effector Rotation');
-legend('\theta');
-figure;
-hold on;
-plot3(p0(1),p0(2),p0(3),'.r','MarkerSize',20);
-text(p0(1),p0(2),p0(3),'Start');
-plot3(pf(1),pf(2),pf(3),'.r','MarkerSize',20);
-text(pf(1),pf(2),pf(3),'End');
-plot3(p(1,:),p(2,:),p(3,:));
-axis([-6 6 -6 6 -6 6]);
-xlabel('X');
-ylabel('Y');
-zlabel('Z');
-
-% X,Y,Z position with components U,V,W
-% Inertial Frame
-bigQuiver(xi0(:,1),xi0(:,2),xi0(:,3),xf0(:,1),xf0(:,2),xf0(:,3),4);
-% Initial Frame
-bigQuiver(xi1(:,1),xi1(:,2),xi1(:,3),xf1(:,1),xf1(:,2),xf1(:,3),2);
-% Rotation axis
-bigQuiver(0,0,0,k(1),k(2),k(3),2);
-bigQuiver(pf(1),pf(2),pf(3),k(1),k(2),k(3),2);
-% Final Frame
-bigQuiver(xi2(:,1),xi2(:,2),xi2(:,3),xf2(:,1),xf2(:,2),xf2(:,3),2);
-
-title('3D Trajectory');
-view(30,30);
-grid on;
 end
 
