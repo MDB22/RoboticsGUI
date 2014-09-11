@@ -71,10 +71,10 @@ public static class Constants {
   };
 
   // Constants for the Button objects
-  public static final int NUM_BUTTONS = 7;
+  public static final int NUM_BUTTONS = 9;
 
   public static final String BUTTON_NAMES[] = {
-    "Start", "Stop", "Zero", "Home", "SetHome", "Record", "Exit"
+    "Start", "Stop", "Zero", "Home", "SetHome", "Record", "Exit", "Detach", "Attach"
   };
 
   public static final int BUTTON_X = 80;

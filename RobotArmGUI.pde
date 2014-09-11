@@ -70,20 +70,20 @@ void setup() {
   frame.setResizable(true);
   frame.setTitle("Controller");
 
-  /*
+/*
    //UNCOMMENT HERE
    // Prints out the available serial ports.
    println(Arduino.list());
    
-   // Modify this line, by changing the "0" to the index of the serial
-   // port corresponding to your Arduino board (as it appears in the list
-   // printed by the line above).
+   //Modify this line, by changing the "0" to the index of the serial
+   //port corresponding to your Arduino board (as it appears in the list
+   //printed by the line above).
    arduino = new Arduino(this, "COM4", 57600);
    
    // Set the Arduino digital pins as inputs.
    arduino.pinMode(13, Arduino.SERVO);
-   
 */
+
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
 
@@ -188,6 +188,18 @@ void addServos() {
   }
 }
 
+void removeServos() {
+  for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {    
+    servos.remove(0);
+  }
+  for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {  
+    arduino.pinMode(Constants.PWM_PINS[servoID], Arduino.OUTPUT);
+    print("Detached servo: ");
+    println(Constants.PWM_PINS[servoID]);
+  }
+  
+}
+
 void addUserInput() {
   for (int i = 0; i < Constants.NUM_POSE_INPUTS; i++) {
     cp5.addTextfield(Constants.POSE_INPUT_NAMES[i], Constants.POSE_INPUT_X, Constants.POSE_INPUT_Y + 
@@ -267,6 +279,17 @@ public void Zero() {
   for (ServoController s : servos) {
     s.setJointAngle(0);
   }
+}
+
+// Event handler for "Detach" button
+public void Detach() {
+  removeServos();
+}
+
+// Event handler for "Attach" button
+public void Attach() {
+  addServos();
+  
 }
 
 // Event handler for "Home" button
