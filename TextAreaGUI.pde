@@ -71,15 +71,21 @@ public class TextAreaGUI extends Textarea {
       
           
 
-      float predictedServoValue = map(sum, minFeedback, maxFeedback, 0, 170); 
-      jointAngle = (predictedServoValue-Constants.SERVO_OFFSET[ID])*Constants.SERVO_DIR[ID];
+      float predictedServoValue = map(sum, minFeedback, maxFeedback, 0, 170) - 8; 
+      float scalingFactor = Constants.SERVO_SCALE[ID];
+      int offset = Constants.SERVO_OFFSET[ID];
+      if ((ID == 1) && (predictedServoValue>offset)){
+        scalingFactor = Constants.SERVO_SCALE[6];
+      }
+      jointAngle = (predictedServoValue-offset)*scalingFactor;
+      
 //      if(ID == 0) {
 //        println(sum + "\t" + jointAngle + "\t\t" + predictedServoValue);
 //      }
       if (millis() - time > Constants.DISP_UPDATE) {
         //println("Time is: " + time);
         //this.setText(String.format("%3.2f", jointAngle));
-        this.setText(String.format("%3.2f", sum));
+        this.setText(String.format("%3.2f", jointAngle));
         time = millis();
         //println("feedback value is "+feedback +" for feedback pin "+feedback_pin);
         //println("servoValue angle is "+predictedServoValue);

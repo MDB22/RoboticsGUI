@@ -70,7 +70,6 @@ void setup() {
   frame.setResizable(true);
   frame.setTitle("Controller");
 
-  /*
    //UNCOMMENT HERE
    // Prints out the available serial ports.
    println(Arduino.list());
@@ -82,8 +81,8 @@ void setup() {
    
    // Set the Arduino digital pins as inputs.
    arduino.pinMode(13, Arduino.SERVO);
+   println("connected.");
    
-*/
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
 
@@ -110,6 +109,8 @@ void setup() {
 
   // Allow for scrolling in knob controls
   addMouseWheelListener();
+  
+  Zero();
 
   // Initialise MATLAB communication
   //initMATLAB();
@@ -184,7 +185,9 @@ void addMatrixDisplay() {
 
 void addServos() {
   for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {    
-    servos.add(new ServoController(arduino, cp5, servoID, matrixDisplay));
+    //if (servoID != 1){
+      servos.add(new ServoController(arduino, cp5, servoID, matrixDisplay));
+    //}
   }
 }
 

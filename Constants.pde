@@ -25,20 +25,23 @@ public static class Constants {
   };
 
   public static final int MIN_ANGLE[] = {
-    -120, -120, -180, -120, -120, -100, -120    //-88, -146, -147, -90, -60, -90      //These are now just safety checks. Not used.
+    -110, -70, -140, -105, -95, -105      //These are now just safety checks. Not used.
   };
 
   public static final int MAX_ANGLE[] = {
-    140, 140, 30, 140, 140, 140      //82, 24, 23, 80, 110, 80
+    150, 120, 25, 40, 45, 30
   };
 
   public static final int SERVO_OFFSET[] = {    //when the sevrowrite gives these angles, corresponds to home position
-    60, 134, 154, 50, 70, 40
-  };
+    157, 135, 150, 50, 69, 43
+  };  
+  
+  
 
-  public static final float SERVO_DIR[] = {      //-1 means increasing servoValue decreases joint Angle.
-    -1, -1, 1, 1, -1, 1
+  public static final float SERVO_SCALE[] = {      //-1 means increasing servoValue decreases joint Angle.
+    -1.02, -1.08, 1.06, -1.22, -1.22, -1.28, -0.71
   };
+  
 
   public static final int SERVOVAL_MIN = 0;        //Check these with Trent
   public static final int SERVOVAL_MAX = 180;

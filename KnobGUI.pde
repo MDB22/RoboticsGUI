@@ -61,19 +61,20 @@ public class KnobGUI extends Knob {
      int currentFeedback = (int) getFeedback();
      int currentFeedbackServoValue = (int) map(currentFeedback, Constants.MIN_FEEDBACK[ID], Constants.MAX_FEEDBACK[ID], 0, 170)-7;                 //taken from TextBoxGUI
      
-     int targetValue = Constants.SERVO_DIR[ID]*qDesired*10/9 + Constants.SERVO_OFFSET[ID];
-     int currentValue = currentFeedbackServoValue;    //Constants.SERVO_DIR[ID]*qCurrent*10/9 + Constants.SERVO_OFFSET[ID];
+     int targetValue = Constants.SERVO_SCALE[ID]*qDesired*10/9 + Constants.SERVO_OFFSET[ID];
+     int currentValue = currentFeedbackServoValue;    //Constants.SERVO_SCALE[ID]*qCurrent*10/9 + Constants.SERVO_OFFSET[ID];
      println("currently at servoValue "+currentValue+", feedback indicates "+currentFeedbackServoValue);
      */
 
     // Option 2: This section works but doesn't use feedback. Either use this section or previous one.
-    float scalingFactor = 10/9;
+
+
+    float scalingFactor = Constants.SERVO_SCALE[ID];
     if ((ID == 1)&&(qDesired<0)) {
-      scalingFactor = 5.0/9.0;
-      //println("scaling factor is "+scalingFactor);
+      scalingFactor = Constants.SERVO_SCALE[6];
     }
-    int targetValue = (int) (Constants.SERVO_DIR[ID]*qDesired*scalingFactor + Constants.SERVO_OFFSET[ID]);
-    int currentValue = (int) (Constants.SERVO_DIR[ID]*qCurrent*scalingFactor + Constants.SERVO_OFFSET[ID]);
+    int targetValue = (int) (scalingFactor*qDesired + Constants.SERVO_OFFSET[ID]);
+    int currentValue = (int) (scalingFactor*qCurrent + Constants.SERVO_OFFSET[ID]);
 
     //end of option 2
 
