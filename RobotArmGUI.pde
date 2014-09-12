@@ -70,19 +70,19 @@ void setup() {
   frame.setResizable(true);
   frame.setTitle("Controller");
 
-/*
    //UNCOMMENT HERE
    // Prints out the available serial ports.
    println(Arduino.list());
    
-   //Modify this line, by changing the "0" to the index of the serial
-   //port corresponding to your Arduino board (as it appears in the list
-   //printed by the line above).
+   // Modify this line, by changing the "0" to the index of the serial
+   // port corresponding to your Arduino board (as it appears in the list
+   // printed by the line above).
    arduino = new Arduino(this, "COM4", 57600);
    
    // Set the Arduino digital pins as inputs.
    arduino.pinMode(13, Arduino.SERVO);
-*/
+   println("connected.");
+   
 
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
@@ -184,7 +184,9 @@ void addMatrixDisplay() {
 
 void addServos() {
   for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {    
-    servos.add(new ServoController(arduino, cp5, servoID, matrixDisplay));
+    //if (servoID != 1){
+      servos.add(new ServoController(arduino, cp5, servoID, matrixDisplay));
+    //}
   }
 }
 
