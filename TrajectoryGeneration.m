@@ -2,28 +2,34 @@ function [x,y,z,k,theta,RFI] = TrajectoryGeneration(q, pf, qf, tf)
 %TRAJECTORYGENERATION Computes a trajectory straightline trajectory to
 % the given pose from the current pose using a cubic polynomial.
 %
-% Given the joint angles of the robot (q), first computes the inital pose
-% of the robot using the ForwardKinematics function, then computes the
-% cubic polynomial that takes the robot from initial pose p0 and q0 to
-% the desired final pose pf and qf.
+% Given the current joint angles of the robot (q), first computes the 
+% inital pose of the robot using the ForwardKinematics function, then 
+% computes the cubic polynomial that takes the robot from initial pose 
+% p0 and q0 to the desired final pose pf and qf.
 %
-% This function assumes the the inital and final velocity and aceleration
+% This function assumes the the initial and final velocity and acceleration
 % are zero, so only uses the position to compute the polynomial.
 %
 % Once the polynomial has been calculated, it can then be interpolated
 % using time commands from the Processing sketch to generate the points
 % along the desired path.
 
-T = ForwardKinematics(q);
+%% Initial set up
+% Validate data input
+valid = iscolumn(q) && iscolumn(pf) && iscolumn(qf);
+assert(valid,['Joint angles, desired position and desired orientation'...
+    ' should be input as column vectors.']);
 
+% Function from computing rotation matrix from Yaw, Pitch, Roll parameters
 RPY = @(roll,pitch,yaw)(rotz(yaw)*roty(pitch)*rotx(roll));
+
+% Compute current pose
+[RI0, p0] = ForwardKinematics(q);
 
 %% Compute trajectory for end effector position
 % Assuming initial and final joint velocity (p_dot0, p_dotf) equal to 0,
 % generate a cubic polynomial that achieves the desired end position (pf)
 % from the initial position (p0)
-p0 = T(1:3,4);
-
 a0 = p0;
 a1 = zeros(size(a0));
 a2 = 3*(pf-p0)/tf^2;
@@ -35,7 +41,6 @@ z = @(t)(a0(3) + a1(3)*t + a2(3)*t.^2 + a3(3)*t.^3);
 
 %% Compute trajectory for end effector orientation
 % Gets the initial rotation matrix from the end effector to the inertial frame
-RI0 = T(1:3,1:3)
 RF0 = RPY(qf(1),qf(2),qf(3))
 RFI = RF0*RI0';
 
