@@ -31,6 +31,7 @@ public class ServoController {
   public void setJointAngle(float jointAngle) {
     textbox.setValue(Float.toString(jointAngle));
     knob.setValue(jointAngle);
+    knob.setServoAngle((int) jointAngle);
   }
 }
 

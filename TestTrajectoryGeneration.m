@@ -1,5 +1,4 @@
-% Helper function to run TrajectoryGeneration.m from Processing without
-% having to run all the extra commands
+% Helper function to run tests on TrajectoryGeneration.m
 
 clc;
 close all;
@@ -58,15 +57,16 @@ hold on;
 plot(t,pos(1,:),'--',t,pos(2,:),'-.',t,pos(3,:),':');
 plot(t,x,'-.',t,y,':',t,z,'--');
 title('End Effector Position');
-legend('$x_exact$','$y_exact$','$z_exact$','$x_approx$','$y_approx$','$z_approx$');
+legend('$x_{exact}$','$y_{exact}$','$z_{exact}$',...
+    '$x_{approx}$','$y_{approx}$','$z_{approx}$');
 % Plot exact and approximate orientation functions
 figure;
 hold on;
 plot(t,angles(1,:),'--',t,angles(2,:),'-.',t,angles(3,:),':');
 plot(t,roll,'-.',t,pitch,':',t,yaw,'--');
 title('End Effector Rotation');
-legend('$roll_exact$','$pitch_exact$','$yaw_exact$',...
-    '$roll_approx$','$pitch_approx$','$yaw_approx$');
+legend('$roll_{exact}$','$pitch_{exact}$','$yaw_{exact}$',...
+    '$roll_{approx}$','$pitch_{approx}$','$yaw_{approx}$');
 % Plot errors 
 figure;
 hold on;

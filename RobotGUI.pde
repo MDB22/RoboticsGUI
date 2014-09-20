@@ -121,7 +121,7 @@ public class RobotGUI{
                   drawArm('z',3,3,80);
                   fill(255,255,255);
       popMatrix();
-              drawArm('z',10,5,32);  //d4        //
+              drawArm('z',10,5,32);  //d4
               
               pushMatrix();
                 rotate('x',-90);    //alpha4
