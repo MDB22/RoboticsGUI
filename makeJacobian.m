@@ -75,7 +75,7 @@ end
 alpha = degtorad([0,90,0,90,-90,90]);
 a = [0,11,130,0,0,4];
 d = [78,0,18.5,127,3,98];
-theta = degtorad([q1,q2,q3,q4,q5,q6]+[0,90,90,0,0,0]);
+theta = degtorad([q1,q2,q3,q4,q5,q6]+[-180,90,90,0,0,0]);
 
 % Local z axis vectors after substituting DH Parameters
 z = subs(z,{alpha0,alpha1,alpha2,alpha3,alpha4,alpha5},alpha);

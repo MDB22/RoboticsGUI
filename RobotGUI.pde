@@ -66,7 +66,7 @@ public class RobotGUI{
       popMatrix();
       drawArm('z',50,50,50);                    //Non-rotating part of the base
       pushMatrix();
-        rotate('z',matrixGUI.jointAngles[0]);    //joint 1- Rotating Base
+        rotate('z',matrixGUI.jointAngles[0]-180);    //joint 1- Rotating Base
 
         drawArm('z',50,50,28);
         pushMatrix();

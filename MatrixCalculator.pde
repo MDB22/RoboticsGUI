@@ -187,7 +187,7 @@ public class MatrixCalculator {
     //Denavit-Hartenberg matrix values:
     
     //From inertial to top of rotated base
-    float alpha0 = 0; float a0 = 0; float d1 = 78; float theta1 = q[1];
+    float alpha0 = 0; float a0 = 0; float d1 = 78; float theta1 = q[1]-180;
   
     //From base to bottom of arm1
     float alpha1 = 90; float a1 = 11; float d2 = 0; float theta2 = q[2]+90;
