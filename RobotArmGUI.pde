@@ -57,8 +57,13 @@ RobotGUI robotDisplay;
 color background = color(4, 79, 111);
 color outline = color(84, 145, 158);
 
-// Keeps track of timefor computations
+// Keeps track of time for computations
 long time = 0;
+
+float currentTime = 0;
+float lastTime = 0;
+float timeSinceCommand = 0;
+float finalTime = 0;
 
 // Variable to indicate a motion command
 boolean move = false;
@@ -69,40 +74,37 @@ void setup() {
   cp5 = new ControlP5(this);
   frame.setResizable(true);
   frame.setTitle("Controller");
-  /*
-   //UNCOMMENT HERE
-   // Prints out the available serial ports.
-   println(Arduino.list());
-   
-   // Modify this line, by changing the "0" to the index of the serial
-   // port corresponding to your Arduino board (as it appears in the list
-   // printed by the line above).
-   
-   arduino = new Arduino(this, "COM4", 57600);
-   
-   // Set the Arduino digital pins as inputs.
-   arduino.pinMode(13, Arduino.SERVO);
-   */
+
+  //UNCOMMENT HERE
+  // Prints out the available serial ports.
+  println(Arduino.list());
+
+  //   // Modify this line, by changing the "0" to the index of the serial
+  //   // port corresponding to your Arduino board (as it appears in the list
+  //   // printed by the line above).
+  //   arduino = new Arduino(this, "COM4", 57600);
+  //   
+  //   // Set the Arduino digital pins as inputs.
+  //   arduino.pinMode(13, Arduino.SERVO);
+  //   println("connected.");   
 
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
-  println("got home");
+
   // Add buttons to UI
   addButtons();
-  println("added buttons");
+
   // Add logging control to UI
   addLogging();
-  println("added logging");
+
   // Add display areas
   addDisplay();
-  println("added display");
+
   // Add display for the matrix
   addMatrixDisplay();
-  println("added matrix display");
+
   // Add servo controllers to UI
   addServos();
-  //removeServos();
-  Zero();
 
   // Add user input commands
   addUserInput();
@@ -121,12 +123,39 @@ void draw() {
   background(background);
   stroke(outline);
 
+  lastTime = currentTime;
+  currentTime = millis();
+
   drawText();
 
   // Update displays with feedback from servos
   for (TextAreaGUI t : display) {
     t.updateValue();
+  }
 
+  try {
+    if (move) { 
+      timeSinceCommand += currentTime - lastTime;
+
+      // Get next set of joint angles for motion
+      comm.proxy.eval("qNew = getNextPosition(q,"+currentTime+","+lastTime+
+        ",x_dot,y_dot,z_dot,roll_dot,pitch_dot,yaw_dot); qNew = qNew'");
+      double[][] qNew = converter.getNumericArray("qNew").getRealArray2D();
+
+      int count = 0;
+      for (ServoController s : servos) {
+        s.setJointAngle((float) (qNew[0][count]));
+        count++;
+      }
+
+      if (timeSinceCommand > finalTime) {
+        move = false;
+        timeSinceCommand = 0;
+      }
+    }
+  } 
+  catch (Exception e) {
+    println("Bad MATLAB in getNextPosition.m");
   }
 
   //rect(matrixDisplay.jointAngles[0],70,10,100);
@@ -187,8 +216,7 @@ void addMatrixDisplay() {
 void addServos() {
   for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {    
     //if (servoID != 1){
-      servos.add(new ServoController(arduino, cp5, servoID, matrixDisplay));
-      println("adding servo "+servoID);
+    servos.add(new ServoController(arduino, cp5, servoID, matrixDisplay));
     //}
   }
 }
@@ -202,7 +230,6 @@ void removeServos() {
     print("Detached servo: ");
     println(Constants.PWM_PINS[servoID]);
   }
-  
 }
 
 void addUserInput() {
@@ -256,6 +283,12 @@ public void Start() {
     for (int i = 0; i < Constants.NUM_POSE_INPUTS; i++) {
       Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
       comm.proxy.setVariable(t.getName(), float(t.getText()));
+
+      if (t.getName().equals("Time")) {
+        // Make sure to convert to milliseconds
+        finalTime = float(t.getText()) * 1000;
+        println(finalTime);
+      }
     }
 
     // Then sends the current joint angles (given by feedback) to MATLAB workspace
@@ -268,10 +301,10 @@ public void Start() {
 
     // Then gets MATLAB to generate the desired path 
     // based on the initial and final points
-    comm.proxy.eval("runTJ");
+    comm.proxy.eval("runTrajectoryGeneration");
   }
   catch(Exception e) {
-    println("Bad MATLAB");
+    println("Bad MATLAB in TrajectoryGeneration.m");
   }
 }
 
@@ -294,7 +327,6 @@ public void Detach() {
 // Event handler for "Attach" button
 public void Attach() {
   addServos();
-  
 }
 
 // Event handler for "Home" button

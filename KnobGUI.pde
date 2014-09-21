@@ -158,11 +158,5 @@ public class KnobGUI extends Knob {
   public void setMatrixGUI(MatrixGUI matrixGUI) {
     this.matrixGUI = matrixGUI;
   }
-
-  /*public void updateValue(float value) {
-   if (value >= minAngle && value <= maxAngle) {
-   this.setValue(value);
-   }
-   }*/
 }
 
