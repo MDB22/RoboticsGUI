@@ -98,6 +98,7 @@ public class KnobGUI extends Knob {
           currentValue--;
           if (arduino != null) {
             arduino.servoWrite(pin, currentValue);
+            println("written pin "+pin+" to value "+currentValue);
           }
           time = millis();
           //println("current servo value in while loop: "+currentValue+", target: "+targetValue);

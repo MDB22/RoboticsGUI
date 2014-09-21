@@ -69,7 +69,7 @@ void setup() {
   cp5 = new ControlP5(this);
   frame.setResizable(true);
   frame.setTitle("Controller");
-
+  /*
    //UNCOMMENT HERE
    // Prints out the available serial ports.
    println(Arduino.list());
@@ -77,30 +77,32 @@ void setup() {
    // Modify this line, by changing the "0" to the index of the serial
    // port corresponding to your Arduino board (as it appears in the list
    // printed by the line above).
+   
    arduino = new Arduino(this, "COM4", 57600);
    
    // Set the Arduino digital pins as inputs.
    arduino.pinMode(13, Arduino.SERVO);
-   println("connected.");
-   
+   */
 
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
-
+  println("got home");
   // Add buttons to UI
   addButtons();
-
+  println("added buttons");
   // Add logging control to UI
   addLogging();
-
+  println("added logging");
   // Add display areas
   addDisplay();
-
+  println("added display");
   // Add display for the matrix
   addMatrixDisplay();
-
+  println("added matrix display");
   // Add servo controllers to UI
   addServos();
+  //removeServos();
+  Zero();
 
   // Add user input commands
   addUserInput();
@@ -186,6 +188,7 @@ void addServos() {
   for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {    
     //if (servoID != 1){
       servos.add(new ServoController(arduino, cp5, servoID, matrixDisplay));
+      println("adding servo "+servoID);
     //}
   }
 }

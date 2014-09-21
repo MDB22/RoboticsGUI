@@ -47,7 +47,7 @@ public class RobotGUI{
 
     pushMatrix();              //setting up inertial frame
      
-      translate(1050,500,50);
+      translate(850,500,50);
        scale(0.7,0.7,0.7);
       rotateX(radians(90));
       

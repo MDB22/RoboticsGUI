@@ -1,15 +1,15 @@
 public static class Constants {
 
   // Generic constants
-  public static final int NUM_SERVOS = 6;
+  public static final int NUM_SERVOS = 7;
   public static final int NUM_TICKS = 10;
 
   public static final String CONTROLLER_NAMES[] = {
-    "Base", "Shoulder", "Elbow", "WristRoll", "WristPitch", "WristYaw"
+    "Base", "Shoulder", "Elbow", "WristRoll", "WristPitch", "WristYaw", "Gripper"
   };
 
   public static final int PWM_PINS[] = {
-    2, 3, 4, 8, 6, 7
+    2, 3, 4, 8, 6, 7, 9
   };
 
   public static final int ANALOG_PINS[] = {
@@ -25,21 +25,21 @@ public static class Constants {
   };
 
   public static final int MIN_ANGLE[] = {
-    -110, -70, -140, -105, -95, -105      //These are now just safety checks. Not used.
+    -110, -70, -140, -105, -95, -105, 0      //These are now just safety checks. Not used.
   };
 
   public static final int MAX_ANGLE[] = {
-    150, 120, 25, 40, 45, 30
+    150, 120, 25, 90, 90, 40, 180
   };
 
   public static final int SERVO_OFFSET[] = {    //when the sevrowrite gives these angles, corresponds to home position
-    157, 135, 150, 50, 69, 43
+    157, 135, 150, 50, 69, 43, 0
   };  
-  
+  //smeep
   
 
   public static final float SERVO_SCALE[] = {      //-1 means increasing servoValue decreases joint Angle.
-    -1.02, -1.08, 1.06, -1.22, -1.22, -1.28, -0.71
+    -1.02, -1.08, 1.06, -1.22, -1.22, -1.28, -0.71, 1
   };
   
 

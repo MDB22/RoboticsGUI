@@ -31,17 +31,20 @@ public class TextAreaGUI extends Textarea {
     }
 
     this.ID = ID;
-    this.minFeedback = Constants.MIN_FEEDBACK[ID];
-    this.maxFeedback = Constants.MAX_FEEDBACK[ID];
-    this.label = Constants.CONTROLLER_NAMES[ID];
+    if (ID!=6){
+      this.minFeedback = Constants.MIN_FEEDBACK[ID];
+      this.maxFeedback = Constants.MAX_FEEDBACK[ID];
+    
+      this.label = Constants.CONTROLLER_NAMES[ID];
 
-    this.setPosition(Constants.DISPLAY_X, Constants.DISPLAY_Y+ID*Constants.TEXTBOX_SEPARATION);
-    this.setWidth(Constants.TEXTBOX_WIDTH);
-    this.setHeight(Constants.TEXTBOX_HEIGHT);
-    this.setText(String.format("%3.2f", home[ID]));
-    this.setBorderColor(border);
-    this.setColorForeground(fg);
-    this.setColorBackground(bg);
+      this.setPosition(Constants.DISPLAY_X, Constants.DISPLAY_Y+ID*Constants.TEXTBOX_SEPARATION);
+      this.setWidth(Constants.TEXTBOX_WIDTH);
+      this.setHeight(Constants.TEXTBOX_HEIGHT);
+      this.setText(String.format("%3.2f", home[ID]));
+      this.setBorderColor(border);
+      this.setColorForeground(fg);
+      this.setColorBackground(bg);
+    }
   }
 
   public int getID() {
@@ -74,10 +77,14 @@ public class TextAreaGUI extends Textarea {
       float predictedServoValue = map(sum, minFeedback, maxFeedback, 0, 170) - 8; 
       float scalingFactor = Constants.SERVO_SCALE[ID];
       int offset = Constants.SERVO_OFFSET[ID];
-      if ((ID == 1) && (predictedServoValue>offset)){
-        scalingFactor = Constants.SERVO_SCALE[6];
+      if (ID == 1){
+        //
+        if (predictedServoValue>offset+5){
+          predictedServoValue = predictedServoValue-5;
+          scalingFactor = Constants.SERVO_SCALE[6];
+        }
       }
-      jointAngle = (predictedServoValue-offset)*scalingFactor;
+      jointAngle = (predictedServoValue-offset)/scalingFactor;
       
 //      if(ID == 0) {
 //        println(sum + "\t" + jointAngle + "\t\t" + predictedServoValue);
