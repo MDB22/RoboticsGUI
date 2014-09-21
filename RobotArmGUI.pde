@@ -82,11 +82,11 @@ void setup() {
   //   // Modify this line, by changing the "0" to the index of the serial
   //   // port corresponding to your Arduino board (as it appears in the list
   //   // printed by the line above).
-  //   arduino = new Arduino(this, "COM4", 57600);
+     arduino = new Arduino(this, "COM4", 57600);
   //   
   //   // Set the Arduino digital pins as inputs.
-  //   arduino.pinMode(13, Arduino.SERVO);
-  //   println("connected.");   
+     arduino.pinMode(13, Arduino.SERVO);
+   //  println("connected.");   
 
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
@@ -102,10 +102,10 @@ void setup() {
 
   // Add display for the matrix
   addMatrixDisplay();
-
+  println("about to add servos");
   // Add servo controllers to UI
   addServos();
-
+  println("servos added");
   // Add user input commands
   addUserInput();
 
@@ -114,7 +114,7 @@ void setup() {
 
   // Allow for scrolling in knob controls
   addMouseWheelListener();
-
+  println("listener added");
   // Initialise MATLAB communication
   //initMATLAB();
 }
@@ -202,7 +202,7 @@ void addLogging() {
 }
 
 void addDisplay() {
-  for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {
+  for (int servoID = 0; servoID < Constants.NUM_SERVOS-1; servoID++) {
     display.add(new TextAreaGUI(arduino, cp5, servoID));
   }
 }

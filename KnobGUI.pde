@@ -27,7 +27,7 @@ public class KnobGUI extends Knob {
 
     this.minAngle = Constants.MIN_ANGLE[servoID];
     this.maxAngle = Constants.MAX_ANGLE[servoID];
-
+    println("got min and max angles");
     this.setPosition(Constants.XKNOB[servoID/3], Constants.YKNOB[servoID%3]);
     this.setRadius(Constants.KNOB_RADII[servoID]);
     this.setRange(minAngle, maxAngle);
@@ -41,12 +41,14 @@ public class KnobGUI extends Knob {
 
 
     this.ID = servoID;
-
+    println("about to add listener");
     this.addListener(new ControlListener() {
       public void controlEvent(ControlEvent e) {
         float val = e.getValue();
         textbox.setText(String.format("%.2f", val));
-        matrixGUI.updateJointValue(ID, val);
+        if (ID!=6){
+          matrixGUI.updateJointValue(ID, val);
+        }
         setServoAngle((int) val);
       }
     }

@@ -13,15 +13,15 @@ public static class Constants {
   };
 
   public static final int ANALOG_PINS[] = {
-    5, 4, 3, 2, 1, 0
+    5, 4, 3, 2, 1, 0, -1
   };
 
   public static final int MIN_FEEDBACK[] = {
-    165, 176, 168, 189, 184, 185
+    165, 176, 168, 189, 184, 185, 0
   };
 
   public static final int MAX_FEEDBACK[] = {
-    684, 688, 684, 727, 726, 694
+    684, 688, 684, 727, 726, 694, 1
   };
 
   public static final int MIN_ANGLE[] = {
@@ -64,13 +64,13 @@ public static class Constants {
 
   // Knob constants
   public static final int XKNOB[] = {
-    480, 640
+    480, 640, 820
   };
   public static final int YKNOB[] = {
     100, 225, 350
   };
   public static final int KNOB_RADII[] = {
-    50, 50, 50, 35, 35, 35
+    50, 50, 50, 35, 35, 35, 35
   };
 
   // Constants for the Button objects
