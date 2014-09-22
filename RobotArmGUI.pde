@@ -116,7 +116,9 @@ void setup() {
   addMouseWheelListener();
   println("listener added");
   // Initialise MATLAB communication
-  //initMATLAB();
+  initMATLAB();
+  
+  println("----------------------------------------------------------------------");
 }
 
 void draw() {
@@ -135,17 +137,24 @@ void draw() {
 
   try {
     if (move) { 
-      timeSinceCommand += currentTime - lastTime;
-
+      float dt = currentTime - lastTime;
+      println("moving, current time is "+currentTime);
       // Get next set of joint angles for motion
-      comm.proxy.eval("qNew = getNextPosition(q,"+currentTime+","+lastTime+
+      comm.proxy.eval("qNew = getNextPosition(q,"+timeSinceCommand+","+dt+
         ",x_dot,y_dot,z_dot,roll_dot,pitch_dot,yaw_dot); qNew = qNew'");
       double[][] qNew = converter.getNumericArray("qNew").getRealArray2D();
+      timeSinceCommand += dt;
+      
+      println(currentTime + " " + lastTime + " " + timeSinceCommand + " " + dt + " " + finalTime);
 
       int count = 0;
       for (ServoController s : servos) {
         s.setJointAngle((float) (qNew[0][count]));
         count++;
+        
+        if (count == 5) {
+          break;
+        }
       }
 
       if (timeSinceCommand > finalTime) {
@@ -156,6 +165,7 @@ void draw() {
   } 
   catch (Exception e) {
     println("Bad MATLAB in getNextPosition.m");
+    println(e.getMessage());
   }
 
   //rect(matrixDisplay.jointAngles[0],70,10,100);
@@ -287,13 +297,13 @@ public void Start() {
       if (t.getName().equals("Time")) {
         // Make sure to convert to milliseconds
         finalTime = float(t.getText()) * 1000;
-        println(finalTime);
       }
     }
 
     // Then sends the current joint angles (given by feedback) to MATLAB workspace
-    for (TextAreaGUI d : display) {
-      comm.proxy.setVariable("q" + d.getLabel(), float(d.getText()));
+    //for (TextAreaGUI d : display) {
+    for (ServoController s : servos) {
+      comm.proxy.setVariable("q" + s.name, s.getValue());
     }
 
     // Enables motion

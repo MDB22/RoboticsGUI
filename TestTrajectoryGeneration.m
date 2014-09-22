@@ -3,20 +3,20 @@
 clc;
 close all;
 
-%q = [qBase;qShoulder;qElbow;qWristRoll;qWristPitch;qWristYaw];
-q = [0;0;0;0;0;0];
+q = [qBase;qShoulder;qElbow;qWristRoll;qWristPitch;qWristYaw];
+% q = [0;0;0;0;0;0];
 
 [RI0, p0] = ForwardKinematics(q);
 RPY = @(roll,pitch,yaw)(rotx(roll)*roty(pitch)*rotz(yaw));
 
-%pf = [X;Y;Z];
-deltap = [10;-10;10];
-pf = p0 + deltap;
+pf = [X;Y;Z];
+% deltap = [10;-10;10];
+% pf = p0 + deltap;
 
-%qf = [Roll;Pitch;Yaw];
+qf = [Roll;Pitch;Yaw];
 q0 = [0;0;0];
-dq = [90;45;45];
-qf = q0 + dq;
+% dq = [90;45;45];
+% qf = q0 + dq;
 
 if (exist('Time','var') == 1 && Time ~= 0)
     tf = Time;

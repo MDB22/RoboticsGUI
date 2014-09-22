@@ -73,7 +73,7 @@ public class KnobGUI extends Knob {
 
     float scalingFactor = Constants.SERVO_SCALE[ID];
     if ((ID == 1)&&(qDesired<0)) {
-      scalingFactor = Constants.SERVO_SCALE[6];
+      scalingFactor = Constants.SERVO_SCALE[7];
     }
     int targetValue = (int) (scalingFactor*qDesired + Constants.SERVO_OFFSET[ID]);
     int currentValue = (int) (scalingFactor*qCurrent + Constants.SERVO_OFFSET[ID]);
@@ -82,17 +82,20 @@ public class KnobGUI extends Knob {
 
     println("Setting servo "+ID+" to joint angle "+qDesired+" = servoValue "+targetValue);
 
-
+          if (arduino != null) {
+            arduino.servoWrite(pin, targetValue);
+          }
+          /*
     if (currentValue < targetValue) {
       while (currentValue < targetValue) {
-        if (millis()-time >=10) {
+        //if (millis()-time >=10) {
           currentValue++;
           if (arduino != null) {
             arduino.servoWrite(pin, currentValue);
           }
           time = millis();
           //println("current servo value in while loop: "+currentValue+", target: "+targetValue);
-        }
+        //}
       }
     } else if (currentValue > targetValue) {
       while (currentValue > targetValue) {
@@ -100,7 +103,7 @@ public class KnobGUI extends Knob {
           currentValue--;
           if (arduino != null) {
             arduino.servoWrite(pin, currentValue);
-            println("written pin "+pin+" to value "+currentValue);
+            //println("written pin "+pin+" to value "+currentValue);
           }
           time = millis();
           //println("current servo value in while loop: "+currentValue+", target: "+targetValue);
@@ -110,7 +113,7 @@ public class KnobGUI extends Knob {
       if (arduino != null) {      
         arduino.servoWrite(pin, currentValue);
       }
-    }
+    }*/
     this.qCurrent = qDesired;
     //println("servo value now at: "+currentValue);
 

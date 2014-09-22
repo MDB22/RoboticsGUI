@@ -39,7 +39,7 @@ public static class Constants {
   
 
   public static final float SERVO_SCALE[] = {      //-1 means increasing servoValue decreases joint Angle.
-    -1.02, -1.08, 1.06, -1.22, -1.22, -1.28, -0.71, 1
+    -1.02, -1.08, 1.06, -1.22, -1.22, -1.28, 1, -0.71
   };
   
 

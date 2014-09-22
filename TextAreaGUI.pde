@@ -81,7 +81,7 @@ public class TextAreaGUI extends Textarea {
         //
         if (predictedServoValue>offset+5){
           predictedServoValue = predictedServoValue-5;
-          scalingFactor = Constants.SERVO_SCALE[6];
+          scalingFactor = Constants.SERVO_SCALE[7];
         }
       }
       jointAngle = (predictedServoValue-offset)/scalingFactor;

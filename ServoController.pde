@@ -33,11 +33,19 @@ public class ServoController {
   public int getID() {
     return servoID;
   }
+  
+  public float getValue() {
+    return knob.getValue();
+  }
 
   public void setJointAngle(float jointAngle) {
+    println("setJointAngle: "+jointAngle);
     textbox.setValue(Float.toString(jointAngle));
+    println("starting knob.setvalue");
     knob.setValue(jointAngle);
+    println("starting knob.setservovalue");
     knob.setServoAngle((int) jointAngle);
+    println("finished setjointangle");
   }
 }
 
