@@ -5,7 +5,9 @@ function qNew = getNextPosition(q0,lastTime,dt,x_dot,y_dot,z_dot,...
 %   orientation, uses Euler approximation to generate the robot joint
 %   angles for the next iteration.
 
-dt = dt/1000;
+% Convert to seconds
+lastTime = lastTime/1000
+dt = dt/1000
 
 taskSpaceVelocities = [
     x_dot(lastTime);

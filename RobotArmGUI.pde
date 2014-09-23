@@ -43,7 +43,9 @@ MatrixGUI matrixDisplay;
 // Global variables for stored/logged data, and controls
 float home[] = new float[Constants.NUM_SERVOS];
 ArrayList<float[]> data = new ArrayList<float[]>();
+
 Toggle logData;
+Toggle attach;
 
 // MATLAB control variables
 MatlabComm comm;
@@ -82,10 +84,10 @@ void setup() {
   //   // Modify this line, by changing the "0" to the index of the serial
   //   // port corresponding to your Arduino board (as it appears in the list
   //   // printed by the line above).
-     arduino = new Arduino(this, "COM4", 57600);
+//     arduino = new Arduino(this, "COM4", 57600);
   //   
   //   // Set the Arduino digital pins as inputs.
-     arduino.pinMode(13, Arduino.SERVO);
+//     arduino.pinMode(13, Arduino.SERVO);
    //  println("connected.");   
 
   // Read the home position from the text file
@@ -96,6 +98,9 @@ void setup() {
 
   // Add logging control to UI
   addLogging();
+  
+  // Add servo attach/detach control to UI
+  addAttach();
 
   // Add display areas
   addDisplay();
@@ -145,7 +150,7 @@ void draw() {
       double[][] qNew = converter.getNumericArray("qNew").getRealArray2D();
       timeSinceCommand += dt;
       
-      println(currentTime + " " + lastTime + " " + timeSinceCommand + " " + dt + " " + finalTime);
+      //println(currentTime + " " + lastTime + " " + timeSinceCommand + " " + dt + " " + finalTime);
 
       int count = 0;
       for (ServoController s : servos) {
@@ -207,8 +212,15 @@ void addButtons() {
 
 void addLogging() {
   logData = new Toggle(cp5, Constants.LOGBUTTON_NAME);
-  logData.setPosition(Constants.LOG_XPOS, Constants.LOG_YPOS);
-  logData .setSize(Constants.LOG_XSIZE, Constants.LOG_YSIZE);
+  logData.setPosition(Constants.TOGGLE_XPOS, Constants.LOG_YPOS);
+  logData.setSize(Constants.TOGGLE_XSIZE, Constants.TOGGLE_YSIZE);
+}
+
+void addAttach() {
+  attach = new Toggle(cp5, Constants.ATTACHBUTTON_NAME);
+  attach.setPosition(Constants.TOGGLE_XPOS, Constants.ATTACH_YPOS);
+  attach.setSize(Constants.TOGGLE_XSIZE, Constants.TOGGLE_YSIZE);
+  attach.setState(true);
 }
 
 void addDisplay() {
@@ -231,7 +243,7 @@ void addServos() {
   }
 }
 
-void removeServos() {
+void detachServos() {
   for (int servoID = 0; servoID < Constants.NUM_SERVOS; servoID++) {    
     servos.remove(0);
   }
@@ -246,7 +258,7 @@ void addUserInput() {
   for (int i = 0; i < Constants.NUM_POSE_INPUTS; i++) {
     cp5.addTextfield(Constants.POSE_INPUT_NAMES[i], Constants.POSE_INPUT_X, Constants.POSE_INPUT_Y + 
       i*(Constants.POSE_INPUT_Y_SEP + Constants.POSE_INPUT_HEIGHT), Constants.POSE_INPUT_WIDTH, Constants.POSE_INPUT_HEIGHT)
-      .setText("0");
+      .setText(Constants.DEFAULT_USER_INPUT[i]);
   }
 }
 
@@ -329,15 +341,13 @@ public void Zero() {
   }
 }
 
-// Event handler for "Detach" button
-public void Detach() {
-  removeServos();
-}
-
-// Event handler for "Attach" button
-public void Attach() {
-  addServos();
-}
+public void ToggleServos() {
+  boolean mode = attach.getState();
+  
+  for (ServoController s : servos) {
+    s.setPinMode(mode);
+  }
+}  
 
 // Event handler for "Home" button
 public void Home() {

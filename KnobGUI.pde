@@ -46,7 +46,7 @@ public class KnobGUI extends Knob {
       public void controlEvent(ControlEvent e) {
         float val = e.getValue();
         textbox.setText(String.format("%.2f", val));
-        if (ID!=6){
+        if (ID!=6) {
           matrixGUI.updateJointValue(ID, val);
         }
         setServoAngle((int) val);
@@ -82,38 +82,39 @@ public class KnobGUI extends Knob {
 
     println("Setting servo "+ID+" to joint angle "+qDesired+" = servoValue "+targetValue);
 
-          if (arduino != null) {
-            arduino.servoWrite(pin, targetValue);
-          }
-          /*
+    if (arduino != null) {
+      arduino.servoWrite(pin, targetValue);
+    }
+    /*
     if (currentValue < targetValue) {
-      while (currentValue < targetValue) {
-        //if (millis()-time >=10) {
-          currentValue++;
-          if (arduino != null) {
-            arduino.servoWrite(pin, currentValue);
-          }
-          time = millis();
-          //println("current servo value in while loop: "+currentValue+", target: "+targetValue);
-        //}
-      }
-    } else if (currentValue > targetValue) {
-      while (currentValue > targetValue) {
-        if (millis()-time >=10) {
-          currentValue--;
-          if (arduino != null) {
-            arduino.servoWrite(pin, currentValue);
-            //println("written pin "+pin+" to value "+currentValue);
-          }
-          time = millis();
-          //println("current servo value in while loop: "+currentValue+", target: "+targetValue);
-        }
-      }
-    } else {
-      if (arduino != null) {      
-        arduino.servoWrite(pin, currentValue);
-      }
-    }*/
+     while (currentValue < targetValue) {
+     //if (millis()-time >=10) {
+     currentValue++;
+     if (arduino != null) {
+     arduino.servoWrite(pin, currentValue);
+     }
+     time = millis();
+     //println("current servo value in while loop: "+currentValue+", target: "+targetValue);
+     //}
+     }
+     } else if (currentValue > targetValue) {
+     while (currentValue > targetValue) {
+     if (millis()-time >=10) {
+     currentValue--;
+     if (arduino != null) {
+     arduino.servoWrite(pin, currentValue);
+     //println("written pin "+pin+" to value "+currentValue);
+     }
+     time = millis();
+     //println("current servo value in while loop: "+currentValue+", target: "+targetValue);
+     }
+     }
+     } else {
+     if (arduino != null) {      
+     arduino.servoWrite(pin, currentValue);
+     }
+     }*/
+     
     this.qCurrent = qDesired;
     //println("servo value now at: "+currentValue);
 

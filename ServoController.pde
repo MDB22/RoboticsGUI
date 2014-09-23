@@ -9,7 +9,7 @@ public class ServoController {
   int pwmPin;
 
   String name;
-  
+
   ServoController(Arduino arduino, ControlP5 cp5, int servoID, MatrixGUI matrixGUI) {
     println("creating servocontroller "+servoID);
     this.name = Constants.CONTROLLER_NAMES[servoID];
@@ -22,10 +22,10 @@ public class ServoController {
     knob = new KnobGUI(arduino, this.pwmPin, cp5, servoID); 
     println("created knob");
     //if (servoID!=6){
-      textbox = new TextBoxGUI(arduino, this.pwmPin, cp5, servoID);
-      textbox.setKnobGUI(knob);
-      knob.setTextBoxGUI(textbox);
-      knob.setMatrixGUI(matrixGUI);
+    textbox = new TextBoxGUI(arduino, this.pwmPin, cp5, servoID);
+    textbox.setKnobGUI(knob);
+    knob.setTextBoxGUI(textbox);
+    knob.setMatrixGUI(matrixGUI);
     //}
     println("servocontroller "+servoID+" created.");
   }
@@ -33,7 +33,7 @@ public class ServoController {
   public int getID() {
     return servoID;
   }
-  
+
   public float getValue() {
     return knob.getValue();
   }
@@ -46,6 +46,16 @@ public class ServoController {
     println("starting knob.setservovalue");
     knob.setServoAngle((int) jointAngle);
     println("finished setjointangle");
+  }
+
+  public void setPinMode(boolean attach) {
+    if (arduino != null) {
+      if (attach) {
+        arduino.pinMode(this.pwmPin, Arduino.SERVO);
+      } else {
+        arduino.pinMode(this.pwmPin, Arduino.INPUT);
+      }
+    }
   }
 }
 

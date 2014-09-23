@@ -35,13 +35,10 @@ public static class Constants {
   public static final int SERVO_OFFSET[] = {    //when the sevrowrite gives these angles, corresponds to home position
     157, 135, 150, 50, 69, 43, 0
   };  
-  //smeep
-  
 
   public static final float SERVO_SCALE[] = {      //-1 means increasing servoValue decreases joint Angle.
     -1.02, -1.08, 1.06, -1.22, -1.22, -1.28, 1, -0.71
   };
-  
 
   public static final int SERVOVAL_MIN = 0;        //Check these with Trent
   public static final int SERVOVAL_MAX = 180;
@@ -64,7 +61,7 @@ public static class Constants {
 
   // Knob constants
   public static final int XKNOB[] = {
-    480, 640, 820
+    480, 640, 760
   };
   public static final int YKNOB[] = {
     100, 225, 350
@@ -74,10 +71,10 @@ public static class Constants {
   };
 
   // Constants for the Button objects
-  public static final int NUM_BUTTONS = 9;
+  public static final int NUM_BUTTONS = 7;
 
   public static final String BUTTON_NAMES[] = {
-    "Start", "Stop", "Zero", "Home", "SetHome", "Record", "Exit", "Detach", "Attach"
+    "Start", "Stop", "Zero", "Home", "SetHome", "Record", "Exit"
   };
 
   public static final int BUTTON_X = 80;
@@ -124,14 +121,17 @@ public static class Constants {
   public static final int MATRIX_X_LABEL = MATRIX_X+4*MATRIX_X_SEPARATION+MATRIX_X_GAP+2;
   public static final int MATRIX_Y_LABEL = MATRIX_Y+MATRIX_ELEMENT_HEIGHT/2;
 
-  // Constants for the Log Button
+  // Constants for the Toggle Buttons
   public static final String LOGBUTTON_NAME = "LogData";
+  public static final String ATTACHBUTTON_NAME = "ToggleServos";
 
-  public static final int LOG_XPOS = 200;
+  public static final int TOGGLE_XPOS = 200;
+  
   public static final int LOG_YPOS = 100;
+  public static final int ATTACH_YPOS = 140;
 
-  public static final int LOG_XSIZE = 20;
-  public static final int LOG_YSIZE = 20;
+  public static final int TOGGLE_XSIZE = 20;
+  public static final int TOGGLE_YSIZE = 20;
 
   // User position control constants
   public static final int NUM_POSE_INPUTS = 7;
@@ -144,6 +144,10 @@ public static class Constants {
 
   public static final String POSE_INPUT_NAMES[] = {
     "X", "Y", "Z", "Roll", "Pitch", "Yaw", "Time"
+  };
+
+  public static final String DEFAULT_USER_INPUT[] = {
+    "-10", "25", "400", "0", "0", "0", "10"
   };
 }
 
