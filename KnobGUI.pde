@@ -14,7 +14,7 @@ public class KnobGUI extends Knob {
   private String name;
 
   private float minAngle, maxAngle;
-  private int qCurrent;
+  private float qCurrent;
 
   private final int ID;
 
@@ -49,7 +49,7 @@ public class KnobGUI extends Knob {
         if (ID!=6) {
           matrixGUI.updateJointValue(ID, val);
         }
-        setServoAngle((int) val);
+        setServoAngle( val);
       }
     }
     );
@@ -57,7 +57,7 @@ public class KnobGUI extends Knob {
 
   // When position commands are sent via the GUI (Knob or TextBox),
   // this method will smoothly move the joint to the desired angle
-  public void setServoAngle(int qDesired) {
+  public void setServoAngle(float qDesired) {
     /* Option 1: Trying to usee feedback, does funky stuff- always goes to home before moving to new location. 
      
      int currentFeedback = (int) getFeedback();
@@ -75,15 +75,15 @@ public class KnobGUI extends Knob {
     if ((ID == 1)&&(qDesired<0)) {
       scalingFactor = Constants.SERVO_SCALE[7];
     }
-    int targetValue = (int) (scalingFactor*qDesired + Constants.SERVO_OFFSET[ID]);
-    int currentValue = (int) (scalingFactor*qCurrent + Constants.SERVO_OFFSET[ID]);
+    float targetValue = scalingFactor*qDesired + Constants.SERVO_OFFSET[ID];
+    float currentValue = scalingFactor*qCurrent + Constants.SERVO_OFFSET[ID];
 
     //end of option 2
 
     println("Setting servo "+ID+" to joint angle "+qDesired+" = servoValue "+targetValue);
 
     if (arduino != null) {
-      arduino.servoWrite(pin, targetValue);
+      arduino.servoWrite(pin, (int) targetValue);
     }
     /*
     if (currentValue < targetValue) {

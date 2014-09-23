@@ -44,7 +44,7 @@ public class ServoController {
     println("starting knob.setvalue");
     knob.setValue(jointAngle);
     println("starting knob.setservovalue");
-    knob.setServoAngle((int) jointAngle);
+    knob.setServoAngle( jointAngle);
     println("finished setjointangle");
   }
 

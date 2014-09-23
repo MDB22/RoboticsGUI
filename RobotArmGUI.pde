@@ -79,7 +79,7 @@ void setup() {
 
   //UNCOMMENT HERE
   // Prints out the available serial ports.
-  println(Arduino.list());
+  //println(Arduino.list());
 
   //   // Modify this line, by changing the "0" to the index of the serial
   //   // port corresponding to your Arduino board (as it appears in the list
