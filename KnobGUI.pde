@@ -27,7 +27,6 @@ public class KnobGUI extends Knob {
 
     this.minAngle = Constants.MIN_ANGLE[servoID];
     this.maxAngle = Constants.MAX_ANGLE[servoID];
-    println("got min and max angles");
     this.setPosition(Constants.XKNOB[servoID/3], Constants.YKNOB[servoID%3]);
     this.setRadius(Constants.KNOB_RADII[servoID]);
     this.setRange(minAngle, maxAngle);
@@ -37,11 +36,9 @@ public class KnobGUI extends Knob {
     this.setShowAngleRange(false);
     this.qCurrent = (int) home[servoID];
     //this.qCurrent = -1;
-    this.setServoAngle(5);
-
 
     this.ID = servoID;
-    println("about to add listener");
+    this.setServoAngle(5);
     this.addListener(new ControlListener() {
       public void controlEvent(ControlEvent e) {
         float val = e.getValue();
@@ -80,7 +77,7 @@ public class KnobGUI extends Knob {
 
     //end of option 2
 
-    println("Setting servo "+ID+" to joint angle "+qDesired+" = servoValue "+targetValue);
+    //println("Setting servo "+this.ID+" to joint angle "+qDesired+" = servoValue "+targetValue);
 
     if (arduino != null) {
       arduino.servoWrite(pin, (int) targetValue);

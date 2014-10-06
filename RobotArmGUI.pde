@@ -107,10 +107,10 @@ void setup() {
 
   // Add display for the matrix
   addMatrixDisplay();
-  println("about to add servos");
+
   // Add servo controllers to UI
   addServos();
-  println("servos added");
+  
   // Add user input commands
   addUserInput();
 
@@ -119,7 +119,6 @@ void setup() {
 
   // Allow for scrolling in knob controls
   addMouseWheelListener();
-  println("listener added");
   // Initialise MATLAB communication
   initMATLAB();
   
@@ -127,6 +126,8 @@ void setup() {
 }
 
 void draw() {
+  try {
+  println("starting draw");
   background(background);
   stroke(outline);
 
@@ -143,21 +144,28 @@ void draw() {
   try {
     if (move) { 
       float dt = currentTime - lastTime;
-      println("moving, current time is "+currentTime);
+      println("moving: t="+currentTime);
       // Get next set of joint angles for motion
       comm.proxy.eval("qNew = getNextPosition(q,"+timeSinceCommand+","+dt+
-        ",x_dot,y_dot,z_dot,roll_dot,pitch_dot,yaw_dot); qNew = qNew'");
+        ",x_dot,y_dot,z_dot,roll_dot,pitch_dot,yaw_dot); qNew = qNew'; q = qNew';");
       double[][] qNew = converter.getNumericArray("qNew").getRealArray2D();
+      print("qNew is: [");
+      for (int i=0; i<6; i++){
+        print(String.format("%3.2f, ",qNew[0][i]));
+      }
+      print("]\n");
       timeSinceCommand += dt;
       
-      //println(currentTime + " " + lastTime + " " + timeSinceCommand + " " + dt + " " + finalTime);
+      println("current: "+currentTime + "  last: " + lastTime + "  timesincecommand: " + timeSinceCommand + "  dt: " + dt + "  final: " + finalTime);
 
       int count = 0;
       for (ServoController s : servos) {
+        //print(count);
         s.setJointAngle((float) (qNew[0][count]));
         count++;
+        //print(count);
         
-        if (count == 5) {
+        if (count == 6) {
           break;
         }
       }
@@ -166,6 +174,7 @@ void draw() {
         move = false;
         timeSinceCommand = 0;
       }
+      println("finished one move");
     }
   } 
   catch (Exception e) {
@@ -175,6 +184,10 @@ void draw() {
 
   //rect(matrixDisplay.jointAngles[0],70,10,100);
   robotDisplay.drawRobot();
+  println("finished draw");
+  } catch(Exception e) {
+    println("Fuck you Processing");
+  }
 }
 
 void drawText() {

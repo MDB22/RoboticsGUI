@@ -18,9 +18,7 @@ public class ServoController {
     if (arduino != null) {
       arduino.pinMode(this.pwmPin, Arduino.SERVO);
     }
-    println("creating knob");
     knob = new KnobGUI(arduino, this.pwmPin, cp5, servoID); 
-    println("created knob");
     //if (servoID!=6){
     textbox = new TextBoxGUI(arduino, this.pwmPin, cp5, servoID);
     textbox.setKnobGUI(knob);
@@ -39,13 +37,13 @@ public class ServoController {
   }
 
   public void setJointAngle(float jointAngle) {
-    println("setJointAngle: "+jointAngle);
+    //println("setJointAngle: "+jointAngle);
     textbox.setValue(Float.toString(jointAngle));
-    println("starting knob.setvalue");
+    //println("starting knob.setvalue");
     knob.setValue(jointAngle);
-    println("starting knob.setservovalue");
-    knob.setServoAngle( jointAngle);
-    println("finished setjointangle");
+    //println("starting knob.setservovalue");
+    //knob.setServoAngle( jointAngle);
+    //println("finished setjointangle");
   }
 
   public void setPinMode(boolean attach) {
