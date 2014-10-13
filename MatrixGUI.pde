@@ -6,7 +6,7 @@ import controlP5.*;
 public class MatrixGUI {
 
   ArrayList<Textfield> textArray = new ArrayList<Textfield>();
-  ArrayList<Textfield> textArray2 = new ArrayList<Textfield>();
+  ArrayList<Textfield> jOmegaTextArray = new ArrayList<Textfield>();
   ArrayList<Textfield> jVTextArray = new ArrayList<Textfield>();
 
   float[] jointAngles = Constants.INITIAL_JOINT_ANGLES;
@@ -45,29 +45,12 @@ public class MatrixGUI {
         textArray.add(tf);
       }
     }
-
-    for (int row=0; row<3; row++) {
-      for (int col=0; col<6; col++) {
-        Textfield tf = new Textfield(cp5, String.format("%d", 6*row+col)+"jo");  //textarea displays strangely on GUI so used textfield
-        int xpos = x+x_separation*col;
-        int ypos = y+140+y_separation*row;                 //between rotation and translation components
-        tf.setPosition(xpos, ypos);
-        tf.setSize(matrix_element_width, matrix_element_height);
-
-        tf.setColorForeground(fg);
-        tf.setColorBackground(bg);
-        String string = String.format("%3.2f", jOmega.getElement(row, col));
-        tf.setText(string);
-        tf.setLabel("");
-        textArray2.add(tf);
-      }
-    }
-
+    //For jV
     for (int row=0; row<3; row++) {
       for (int col=0; col<6; col++) {
         Textfield tf = new Textfield(cp5, String.format("%d", 6*row+col)+"jv");  //textarea displays strangely on GUI so used textfield
         int xpos = x+x_separation*col;
-        int ypos = y+220+y_separation*row;                 //between rotation and translation components
+        int ypos = y+140+y_separation*row;                 //between rotation and translation components
         tf.setPosition(xpos, ypos);
         tf.setSize(matrix_element_width, matrix_element_height);
 
@@ -79,7 +62,26 @@ public class MatrixGUI {
         jVTextArray.add(tf);
       }
     }
+  // for jOmega
+  for (int row=0; row<3; row++) {
+      for (int col=0; col<6; col++) {
+        Textfield tf = new Textfield(cp5, String.format("%d", 6*row+col)+"jo");  //textarea displays strangely on GUI so used textfield
+        int xpos = x+x_separation*col;
+        int ypos = y+220+y_separation*row;                 //between rotation and translation components
+        tf.setPosition(xpos, ypos);
+        tf.setSize(matrix_element_width, matrix_element_height);
+
+        tf.setColorForeground(fg);
+        tf.setColorBackground(bg);
+        String string = String.format("%3.2f", jOmega.getElement(row, col));
+        tf.setText(string);
+        tf.setLabel("");
+        jOmegaTextArray.add(tf);
+      }
+    }
   }
+
+
 
   //The feedback from TextAreaGUI will update the joint value,
   // and the transformation matrix will be recalculated.
@@ -97,7 +99,7 @@ public class MatrixGUI {
     }
     for (int row=0; row<3; row++) {
       for (int col=0; col<6; col++) {
-        textArray2.get(6*row+col).setText(String.format("%3.2f", jOmega.getElement(row, col)));
+        jOmegaTextArray.get(6*row+col).setText(String.format("%3.2f", jOmega.getElement(row, col)));
       }
     }
     for (int row=0; row<3; row++) {

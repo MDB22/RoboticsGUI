@@ -66,6 +66,7 @@ float currentTime = 0;
 float lastTime = 0;
 float timeSinceCommand = 0;
 float finalTime = 0;
+int trajectory_iteration = 1;          // use this to get the correct column from the joint angle matrix q
 
 // Variable to indicate a motion command
 boolean move = false;
@@ -127,7 +128,7 @@ void setup() {
 
 void draw() {
   try {
-  println("starting draw");
+  //println("starting draw");
   background(background);
   stroke(outline);
 
@@ -143,34 +144,46 @@ void draw() {
 
   try {
     if (move) { 
+      trajectory_iteration++;
       float dt = currentTime - lastTime;
       println("moving: t="+currentTime);
       // Get next set of joint angles for motion
-      comm.proxy.eval("qNew = getNextPosition(q,"+timeSinceCommand+","+dt+
-        ",x_dot,y_dot,z_dot,roll_dot,pitch_dot,yaw_dot); qNew = qNew'; q = qNew';");
+      //comm.proxy.eval("qNew = getNextPosition(q,"+timeSinceCommand+","+dt+
+      //  ",x_dot,y_dot,z_dot,roll_dot,pitch_dot,yaw_dot); qNew = qNew'; q = qNew';");
+      
+      comm.proxy.eval("qNew = getNextPosition2(q_array,"+trajectory_iteration+")");
+      
       double[][] qNew = converter.getNumericArray("qNew").getRealArray2D();
+      print("iteration is "+String.format("%d",trajectory_iteration)+"\n");
       print("qNew is: [");
       for (int i=0; i<6; i++){
-        print(String.format("%3.2f, ",qNew[0][i]));
-      }
-      print("]\n");
-      timeSinceCommand += dt;
-      
-      println("current: "+currentTime + "  last: " + lastTime + "  timesincecommand: " + timeSinceCommand + "  dt: " + dt + "  final: " + finalTime);
-
-      int count = 0;
-      for (ServoController s : servos) {
-        //print(count);
-        s.setJointAngle((float) (qNew[0][count]));
-        count++;
-        //print(count);
-        
-        if (count == 6) {
+        print(String.format("%3.2f, ",qNew[i][0]));
+        if ((qNew[i][0]>360)||(qNew[i][0]<-360)){
+          print("bad joint angle.");
+          move = false;
           break;
         }
       }
+      print("]\n");
+      if (move!=false){
+        timeSinceCommand += dt;
+      
+        println("current: "+currentTime + "  last: " + lastTime + "  timesincecommand: " + timeSinceCommand + "  dt: " + dt + "  final: " + finalTime);
 
-      if (timeSinceCommand > finalTime) {
+        int count = 0;
+        for (ServoController s : servos) {
+          print(count);
+          s.setJointAngle((float) (qNew[count][0]));
+          count++;
+        
+          if (count == 6) {
+            break;
+          }
+        }
+      }
+
+      //if (timeSinceCommand > finalTime) {
+      if (trajectory_iteration==100){
         move = false;
         timeSinceCommand = 0;
       }
@@ -184,7 +197,7 @@ void draw() {
 
   //rect(matrixDisplay.jointAngles[0],70,10,100);
   robotDisplay.drawRobot();
-  println("finished draw");
+  //println("finished draw");
   } catch(Exception e) {
     println("Fuck you Processing");
   }
@@ -210,8 +223,8 @@ void drawText() {
   text("y-translation", Constants.MATRIX_X_LABEL, Constants.MATRIX_Y_LABEL+Constants.MATRIX_ELEMENT_HEIGHT);
   text("z-translation", Constants.MATRIX_X_LABEL, Constants.MATRIX_Y_LABEL+2*Constants.MATRIX_ELEMENT_HEIGHT);
 
-  text("JOmega", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+155);
-  text("JV", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+225);
+  text("JV", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+155);
+  text("JOmega", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+225);
 }
 
 void addButtons() {
@@ -336,7 +349,9 @@ public void Start() {
 
     // Then gets MATLAB to generate the desired path 
     // based on the initial and final points
-    comm.proxy.eval("runTrajectoryGeneration");
+    //comm.proxy.eval("runTrajectoryGeneration");
+    comm.proxy.eval("generate_trajectory");
+    trajectory_iteration = 1;
   }
   catch(Exception e) {
     println("Bad MATLAB in TrajectoryGeneration.m");

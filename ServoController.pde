@@ -11,7 +11,7 @@ public class ServoController {
   String name;
 
   ServoController(Arduino arduino, ControlP5 cp5, int servoID, MatrixGUI matrixGUI) {
-    println("creating servocontroller "+servoID);
+    //println("creating servocontroller "+servoID);
     this.name = Constants.CONTROLLER_NAMES[servoID];
     this.servoID = servoID;  //this will be a number between 0 and 5 (6 including gripper)
     this.pwmPin = Constants.PWM_PINS[servoID];
@@ -25,7 +25,7 @@ public class ServoController {
     knob.setTextBoxGUI(textbox);
     knob.setMatrixGUI(matrixGUI);
     //}
-    println("servocontroller "+servoID+" created.");
+    //println("servocontroller "+servoID+" created.");
   }
 
   public int getID() {
