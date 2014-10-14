@@ -122,11 +122,12 @@ void setup() {
   addMouseWheelListener();
   // Initialise MATLAB communication
   initMATLAB();
-  
+  Home();
   println("----------------------------------------------------------------------");
 }
 
 void draw() {
+  //println("start draw");
   try {
   //println("starting draw");
   background(background);
@@ -168,7 +169,7 @@ void draw() {
       if (move!=false){
         timeSinceCommand += dt;
       
-        println("current: "+currentTime + "  last: " + lastTime + "  timesincecommand: " + timeSinceCommand + "  dt: " + dt + "  final: " + finalTime);
+        //println("current: "+currentTime + "  last: " + lastTime + "  timesincecommand: " + timeSinceCommand + "  dt: " + dt + "  final: " + finalTime);
 
         int count = 0;
         for (ServoController s : servos) {
@@ -201,6 +202,7 @@ void draw() {
   } catch(Exception e) {
     println("Fuck you Processing");
   }
+  //println("end draw");
 }
 
 void drawText() {
