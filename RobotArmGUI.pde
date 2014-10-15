@@ -152,18 +152,18 @@ void draw() {
       //comm.proxy.eval("qNew = getNextPosition(q,"+timeSinceCommand+","+dt+
       //  ",x_dot,y_dot,z_dot,roll_dot,pitch_dot,yaw_dot); qNew = qNew'; q = qNew';");
       
-      comm.proxy.eval("qNew = getNextPosition2(q_array,"+trajectory_iteration+")");
+      comm.proxy.eval("qNew = getNextPosition2(q_array,"+trajectory_iteration+");");
       
       double[][] qNew = converter.getNumericArray("qNew").getRealArray2D();
       print("iteration is "+String.format("%d",trajectory_iteration)+"\n");
       print("qNew is: [");
       for (int i=0; i<6; i++){
         print(String.format("%3.2f, ",qNew[i][0]));
-        if ((qNew[i][0]>360)||(qNew[i][0]<-360)){
-          print("bad joint angle.");
-          move = false;
-          break;
-        }
+        //if ((qNew[i][0]>360)||(qNew[i][0]<-360)){
+        //  print("bad joint angle.");
+        //  move = false;
+        //  break;
+        //}
       }
       print("]\n");
       if (move!=false){
@@ -173,8 +173,7 @@ void draw() {
 
         int count = 0;
         for (ServoController s : servos) {
-          print(count);
-          s.setJointAngle((float) (qNew[count][0]));
+          s.knob.setValue((float) (qNew[count][0]));
           count++;
         
           if (count == 6) {
@@ -188,9 +187,29 @@ void draw() {
         move = false;
         timeSinceCommand = 0;
       }
-      println("finished one move");
-    }
-  } 
+      println("finished one move");/*
+      comm.proxy.eval("qNext = getNextPosition2(q_array,"+trajectory_iteration+"+1);");
+      
+      double[][] qNext = converter.getNumericArray("qNext").getRealArray2D();
+      print("iteration is "+String.format("%d",trajectory_iteration)+"\n");
+      print("qNext is: [");
+      for (int i=0; i<6; i++){
+        print(String.format("%3.2f, ",qNext[i][0]));
+      }
+      print("]\n");
+      int count = 0;
+      for (ServoController s : servos) {
+        print(count);
+        s.setJointAngle((float) (qNew[count][0]));
+        count++;
+      
+        if (count == 6) {
+          break;
+        }
+      }*/
+      
+  }
+} 
   catch (Exception e) {
     println("Bad MATLAB in getNextPosition.m");
     println(e.getMessage());

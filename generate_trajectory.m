@@ -41,13 +41,15 @@ for i = 2:(numel(robot_t))
     P_i = posRef(:,k+1);  %position at time k. 
     
     RPY_i = angles(:,k+1);
-    qnew = calculate_q(q_array(:,i-1),P_i,RPY_i)
-     if out_of_range(qnew)
-         fprintf('exceeded joint limits\n');
-         q_array(:,i) = q_array(:,i-1);         %keep at same position as before.
-     else                                       %gives robot a chance to get back on track later.
-         q_array(:,i) = qnew;
-     end
+    q_array(:,i) = q_array(:,i-1);
+    qnew_potential = calculate_q(q_array(:,i-1),P_i,RPY_i)
+    if out_of_range(qnew_potential)
+        fprintf('exceeded joint limits\n');
+        q_array(:,i) = q_array(:,i-1);         %keep at same position as before.
+    else                                       %gives robot a chance to get back on track later.
+        q_array(:,i) = qnew_potential;
+    end
+    qi = q_array(:,i)
     
 end
 
