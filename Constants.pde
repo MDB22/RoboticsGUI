@@ -25,11 +25,13 @@ public static class Constants {
   };
 
   public static final int MIN_ANGLE[] = {
-    -360, -360, -360, -360, -360, -360, -360//-110, -70, -140, -105, -95, -105, 0      //These are now just safety checks. Not used.
+   // -110, -70, -140, -105, -95, -105, 0      //These are now just safety checks. Not used.
+   -360, -360, -360, -360, -360, -360, 0
   };
 
   public static final int MAX_ANGLE[] = {
-    360, 360, 360, 360, 360, 360, 360          //150, 120, 25, 90, 90, 40, 180
+    //150, 120, 25, 90, 90, 40, 180
+    360, 360, 360, 360, 360, 360, 180
   };
   
 
@@ -150,5 +152,8 @@ public static class Constants {
   public static final String DEFAULT_USER_INPUT[] = {
     "-10", "25", "400", "0", "0", "0", "10"
   };
+  
+  public static final int TRAJECTORY_MSG_X = 500;
+  public static final int TRAJECTORY_MSG_Y = 550;
 }
 

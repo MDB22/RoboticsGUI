@@ -51,6 +51,7 @@ Toggle attach;
 MatlabComm comm;
 MatlabTypeConverter converter;
 MatlabNumericArray array;
+boolean invalidTrajectory;
 
 // Simulator
 RobotGUI robotDisplay;
@@ -106,6 +107,7 @@ void setup() {
   // Add display areas
   addDisplay();
 
+Home();
   // Add display for the matrix
   addMatrixDisplay();
 
@@ -114,7 +116,7 @@ void setup() {
   
   // Add user input commands
   addUserInput();
-
+  Home();
   // Add simulated robot
   addRobotDisplay();
 
@@ -148,68 +150,39 @@ void draw() {
       trajectory_iteration++;
       float dt = currentTime - lastTime;
       println("moving: t="+currentTime);
+      
       // Get next set of joint angles for motion
-      //comm.proxy.eval("qNew = getNextPosition(q,"+timeSinceCommand+","+dt+
-      //  ",x_dot,y_dot,z_dot,roll_dot,pitch_dot,yaw_dot); qNew = qNew'; q = qNew';");
-      
       comm.proxy.eval("qNew = getNextPosition2(q_array,"+trajectory_iteration+");");
-      
       double[][] qNew = converter.getNumericArray("qNew").getRealArray2D();
+
       print("iteration is "+String.format("%d",trajectory_iteration)+"\n");
       print("qNew is: [");
       for (int i=0; i<6; i++){
         print(String.format("%3.2f, ",qNew[i][0]));
-        //if ((qNew[i][0]>360)||(qNew[i][0]<-360)){
-        //  print("bad joint angle.");
-        //  move = false;
-        //  break;
-        //}
       }
       print("]\n");
-      if (move!=false){
-        timeSinceCommand += dt;
       
-        //println("current: "+currentTime + "  last: " + lastTime + "  timesincecommand: " + timeSinceCommand + "  dt: " + dt + "  final: " + finalTime);
+      timeSinceCommand += dt;
+      
+      //println("current: "+currentTime + "  last: " + lastTime + "  timesincecommand: " + timeSinceCommand + "  dt: " + dt + "  final: " + finalTime);
 
-        int count = 0;
-        for (ServoController s : servos) {
-          s.knob.setValue((float) (qNew[count][0]));
-          count++;
-        
-          if (count == 6) {
-            break;
-          }
+      int count = 0;
+      for (ServoController s : servos) {
+        s.knob.setValue((float) (qNew[count][0]));
+        count++;
+        if (count == 6) {
+          break;
         }
       }
 
       //if (timeSinceCommand > finalTime) {
-      if (trajectory_iteration==100){
+      if (trajectory_iteration==150){
         move = false;
         timeSinceCommand = 0;
       }
-      println("finished one move");/*
-      comm.proxy.eval("qNext = getNextPosition2(q_array,"+trajectory_iteration+"+1);");
-      
-      double[][] qNext = converter.getNumericArray("qNext").getRealArray2D();
-      print("iteration is "+String.format("%d",trajectory_iteration)+"\n");
-      print("qNext is: [");
-      for (int i=0; i<6; i++){
-        print(String.format("%3.2f, ",qNext[i][0]));
-      }
-      print("]\n");
-      int count = 0;
-      for (ServoController s : servos) {
-        print(count);
-        s.setJointAngle((float) (qNew[count][0]));
-        count++;
-      
-        if (count == 6) {
-          break;
-        }
-      }*/
-      
-  }
-} 
+      println("finished one move");  
+    }
+  } 
   catch (Exception e) {
     println("Bad MATLAB in getNextPosition.m");
     println(e.getMessage());
@@ -246,6 +219,14 @@ void drawText() {
 
   text("JV", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+155);
   text("JOmega", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+225);
+  
+  textSize(25);
+
+  if (invalidTrajectory) {
+  text("Can't implement trajectory from here.", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y);
+  text("Please choose another end point,", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 50);
+  text("or change starting position", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 100);
+  }
 }
 
 void addButtons() {
@@ -336,6 +317,9 @@ void initMATLAB() {
     for (TextAreaGUI d : display) {
       comm.proxy.setVariable("q" + d.getLabel(), float(d.getText()));
     }
+      comm.proxy.setVariable("max_angle", Constants.MAX_ANGLE);    //put joint limits into matlab for checking
+      comm.proxy.setVariable("min_angle", Constants.MIN_ANGLE);
+      
   } 
   catch (Exception e) {
     println("Exception caught!");
@@ -344,11 +328,9 @@ void initMATLAB() {
 
 // Event handler for "Start" button
 public void Start() {
-  // Checks to see if desired pose is possible
-  // CheckValues();
 
   try {
-    // Then sends desired position to MATLAB workspace
+    // Send desired position to MATLAB workspace
     for (int i = 0; i < Constants.NUM_POSE_INPUTS; i++) {
       Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
       comm.proxy.setVariable(t.getName(), float(t.getText()));
@@ -359,20 +341,31 @@ public void Start() {
       }
     }
 
-    // Then sends the current joint angles (given by feedback) to MATLAB workspace
+    // Then send the current joint angles to MATLAB workspace
     //for (TextAreaGUI d : display) {
     for (ServoController s : servos) {
       comm.proxy.setVariable("q" + s.name, s.getValue());
     }
-
-    // Enables motion
-    move = true;
-
-    // Then gets MATLAB to generate the desired path 
+    
+    // Then get MATLAB to generate the desired path 
     // based on the initial and final points
-    //comm.proxy.eval("runTrajectoryGeneration");
+    println("--------------------- generating trajectory... ---------------------");
     comm.proxy.eval("generate_trajectory");
     trajectory_iteration = 1;
+    
+    //Test to see if successful trajectory is implementable.
+    comm.proxy.eval("qbounds = get_qbounds(outside)");
+    double[][] boundsArray = converter.getNumericArray("qbounds").getRealArray2D();
+    println("boundsArray is "+boundsArray[0][0]);
+    if(boundsArray[0][0]==1){
+      invalidTrajectory = true;
+      move=true;
+    }
+    else{
+      // Enables motion
+      invalidTrajectory = false;
+      move = true;
+    }
   }
   catch(Exception e) {
     println("Bad MATLAB in TrajectoryGeneration.m");

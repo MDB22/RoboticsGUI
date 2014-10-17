@@ -1,7 +1,9 @@
-function outside = out_of_range(qnew)
+function outside = out_of_range(qnew,min_angle,max_angle)
     outside = false;
-    max_angle = [360,360,360,360,360,360];
-    min_angle = [-360,-360,-360,-360,-360,-360];
+    %  use these as angle constraint overrides for better range of motion
+    %  in simulation.
+    %max_angle = [360,360,360,360,360,360];
+    %min_angle = [-360,-360,-360,-360,-360,-360];
     for i=1:6
         q = qnew(i);
         if q>max_angle(i)

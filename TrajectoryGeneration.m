@@ -28,8 +28,8 @@ RPY = @(roll,pitch,yaw)(rotz(yaw)*roty(pitch)*rotx(roll));
 [RI0, p0] = ForwardKinematics(q);
 % Compute final pose
 RF0 = RPY(qf(1),qf(2),qf(3));
-% Compute rotation between frames
-RFI = RF0 * RI0';
+% Compute rotation between frames- not necessary
+%RFI = RF0 * RI0';
 
 %% Compute trajectory for end effector position
 % Assuming initial and final poisition velocity (p_dot0, p_dotf) equal to 0,
@@ -50,16 +50,16 @@ z_dot = @(t)(a1(3) + 2*a2(3)*t + 3*a3(3)*t.^2);
 
 %% Compute trajectory for end effector orientation
 % Initial rotation from current pose is 0
-% yaw0 = atan2(RI0(2,1),RI0(1,1));
-% pitch0 = atan2(-RI0(3,1),sqrt(RI0(3,2)^2 + RI0(3,3)^2));
-% roll0= atan2(RI0(3,2),RI0(3,3));
-% q0 = rad2deg([roll0;pitch0;yaw0])
-q0 = [0;0;0];
+ yaw0 = atan2(RI0(2,1),RI0(1,1));
+ pitch0 = atan2(-RI0(3,1),sqrt(RI0(3,2)^2 + RI0(3,3)^2));
+ roll0= atan2(RI0(3,2),RI0(3,3));
+ q0 = rad2deg([roll0;pitch0;yaw0]);
+%q0 = [0;0;0];
 
 % Find final orientation of end effector given rotation matrix RFI
-yawf = atan2(RFI(2,1),RFI(1,1));
-pitchf = atan2(-RFI(3,1),sqrt(RFI(3,2)^2 + RFI(3,3)^2));
-rollf = atan2(RFI(3,2),RFI(3,3));
+yawf = atan2(RF0(2,1),RF0(1,1));
+pitchf = atan2(-RF0(3,1),sqrt(RF0(3,2)^2 + RF0(3,3)^2));
+rollf = atan2(RF0(3,2),RF0(3,3));
 qf = rad2deg([rollf;pitchf;yawf]);
 
 % Assuming initial and final orientation velocity (p_dot0, p_dotf) equal to 0,
@@ -79,4 +79,3 @@ pitch_dot = @(t)(a1(2) + 2*a2(2)*t + 3*a3(2)*t.^2);
 yaw_dot = @(t)(a1(3) + 2*a2(3)*t + 3*a3(3)*t.^2);
 
 end
-

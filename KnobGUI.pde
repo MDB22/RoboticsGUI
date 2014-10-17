@@ -77,7 +77,7 @@ public class KnobGUI extends Knob {
 
     //end of option 2
 
-    println("Setting servo "+this.ID+" to joint angle "+qDesired+" = servoValue "+targetValue);
+    //println("Setting servo "+this.ID+" to joint angle "+qDesired+" = servoValue "+targetValue);
 
     if (arduino != null) {
       arduino.servoWrite(pin, (int) targetValue);
