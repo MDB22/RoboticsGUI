@@ -17,11 +17,11 @@ public static class Constants {
   };
 
   public static final int MIN_FEEDBACK[] = {
-    165, 176, 168, 189, 184, 185, 0
+    165, 176, 168, 189, 184, 185, 390
   };
 
   public static final int MAX_FEEDBACK[] = {
-    684, 688, 684, 727, 726, 694, 1
+    684, 688, 684, 727, 726, 694, 600
   };
 
   public static final int MIN_ANGLE[] = {
@@ -29,14 +29,14 @@ public static class Constants {
    //-360, -360, -360, -360, -360, -360, 0
   };
 
-  public static final int MAX_ANGLE[] = {
+  public static final int MAX_ANGLE[] = {           
     150, 120, 25, 90, 90, 40, 110
     //360, 360, 360, 360, 360, 360, 180
   };
   
 
   public static final int SERVO_OFFSET[] = {    //when the sevrowrite gives these angles, corresponds to home position
-    157, 100, 150, 50, 69, 43, 80
+    157, 95, 150, 50, 69, 43, 0
     //157, 135, 150, 50, 69, 43, 0
   };  
 
@@ -75,10 +75,10 @@ public static class Constants {
   };
 
   // Constants for the Button objects
-  public static final int NUM_BUTTONS = 9;
+  public static final int NUM_BUTTONS = 7;
 
   public static final String BUTTON_NAMES[] = {
-    "Start_sequence", "Start_linear", "Start_p2p", "Stop", "Zero", "Home", "SetHome", "Record", "Exit"
+    "Start", "Stop", "Zero", "Home", "SetHome", "Record", "Exit"
   };
 
   public static final int BUTTON_X = 80;
@@ -156,5 +156,14 @@ public static class Constants {
   
   public static final int TRAJECTORY_MSG_X = 500;
   public static final int TRAJECTORY_MSG_Y = 550;
+  
+  
+  // Gripper constants
+  public static final int GRIPPER_A_PIN A5
+  public static final int CLOSE_ANGLE 110
+  public static final int OPEN_ANGLE 50
+  public static final int ITERATIONS 10  // number of itterations to average feedback
+  public static final int GRIP_STRENGTH 15 // smaller value is tighter grip
+  public static final int GRIPPER_PIN 9
 }
 
