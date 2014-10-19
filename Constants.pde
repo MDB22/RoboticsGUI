@@ -25,18 +25,18 @@ public static class Constants {
   };
 
   public static final int MIN_ANGLE[] = {
-    -110, -70, -140, -105, -95, -105, 0      //These are now just safety checks. Not used.
+    -110, -70, -140, -105, -95, -105, 50      //These are now just safety checks. Not used.
    //-360, -360, -360, -360, -360, -360, 0
   };
 
   public static final int MAX_ANGLE[] = {
-    150, 120, 25, 90, 90, 40, 180
+    150, 120, 25, 90, 90, 40, 110
     //360, 360, 360, 360, 360, 360, 180
   };
   
 
   public static final int SERVO_OFFSET[] = {    //when the sevrowrite gives these angles, corresponds to home position
-    157, 100, 150, 50, 69, 43, 0
+    157, 100, 150, 50, 69, 43, 80
     //157, 135, 150, 50, 69, 43, 0
   };  
 
