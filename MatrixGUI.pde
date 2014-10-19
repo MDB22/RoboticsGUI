@@ -9,7 +9,7 @@ public class MatrixGUI {
   ArrayList<Textfield> jOmegaTextArray = new ArrayList<Textfield>();
   ArrayList<Textfield> jVTextArray = new ArrayList<Textfield>();
 
-  float[] jointAngles = Constants.INITIAL_JOINT_ANGLES;
+  float[] jointAngles;        //start in home. had to hard code to not break home position.
   Matrix tMatrix;
   Matrix jOmega;
   Matrix jV;
@@ -19,6 +19,7 @@ public class MatrixGUI {
 
   //initialises the 16 text fields that represent the transformation matrix elements      
   public MatrixGUI(ControlP5 cp5, int x, int y, int x_separation, int y_separation, int matrix_element_width, int matrix_element_height) {
+    jointAngles = Constants.INITIAL_JOINT_ANGLES;
     mcalc.updateTMatrices(jointAngles);
     tMatrix = mcalc.calcTMatrix();
     jOmega = mcalc.calcJOmega();

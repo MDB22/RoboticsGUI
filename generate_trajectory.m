@@ -69,7 +69,7 @@ end
 robot_dt = 0.001;
 robot_t = 0:robot_dt:(tf+tfsettle);
 q_array = zeros(6,length(robot_t)); q_array(:,1) = q0;
-q0
+q0;
 
 num_steps = robot_dt/dt;
 outside = false;
@@ -78,11 +78,12 @@ sum_error = [0;0;0;0;0;0];
 
 %% Trying Proportional method
 
-q_new = q0
+q_new = q0;
 error = [0;0;0;0;0;0];
 xyz = p0;
+
 for i=2:(numel(robot_t))
-    fprintf('--------------------step %d------------------------\n',i);
+    %fprintf('--------------------step %d------------------------\n',i);
     k = (i-1)*num_steps;
     k_prev = (i-2)*num_steps;
     P_i = posRef(:,k+1);
@@ -97,9 +98,9 @@ for i=2:(numel(robot_t))
     
     xc_ref_dot = [P_dot; RPY_dot];                  %reference velocity
     Gain = [5000;5000;5000;1000;1000;1000];
-    if ((i>100)&&(total_trans_error < 2))
-        Gain = 0.5*Gain;
-    end
+    %if ((i>100)&&(total_trans_error < 2))
+    %    Gain = 0.5*Gain;
+    %end
     
     xc_dot = xc_ref_dot + 0.5*Gain.*error + 0*sum_error;            %xc_dot = Kp e
     
@@ -113,20 +114,25 @@ for i=2:(numel(robot_t))
         JInv = inv(J);
     end
     
-    dq = JInv*xc_dot*robot_dt
+    dq = JInv*xc_dot*robot_dt;
     qnew_potential = q_array(:,i-1)+dq;
-     if out_of_range(qnew_potential,min_angle,max_angle)
-          outside = true;                         %at end will tell if final position in range.
-          fprintf('==============================exceeded joint limits\n');
-          q_array(:,i) = q_array(:,i-1);         %keep at same position as before.
-     elseif total_trans_error>600                                       %gives robot a chance to get back on track later.
-         fprintf(' error too large, likely unreachable\n'); 
+    q_array(:,i) = qnew_potential;
+    [current_out, joints] = out_of_range(qnew_potential,min_angle,max_angle);
+    for joint=1:6
+        if joints(joint)==1 %means out of range.
+            outside = true;                         %at end will tell if final position in range.
+            q_array(joint,i) = q_array(joint,i-1);  %use previous value for that joint.
+            fprintf('exceeded joint %d limits, not implemented.\n',joint);
+        end
+    end
+    
+    if total_trans_error>600                                       %gives robot a chance to get back on track later.
+         fprintf(' error too large, likely unreachable. not implemented.\n'); 
          q_array(:,i) = q_array(:,i-1);
-     else
-         outside = false;
-          q_array(:,i) = qnew_potential;
-     end
-     qnew = q_array(:,i)
+    else
+        outside = false;
+    end
+    qnew = q_array(:,i);
     [R_new, P_new] = ForwardKinematics(q_array(:,i));
     P_new;
     xyz(:,i)=P_new;
@@ -135,10 +141,9 @@ for i=2:(numel(robot_t))
     total_trans_error = abs(error_translation(1))+abs(error_translation(2))+abs(error_translation(3))
     error_orientation = get_error_orientation(R_i,R_new);
 
-    error = [error_translation; error_orientation]
+    error = [error_translation; error_orientation];
     sum_error = sum_error+error;
-    
-    
+
 end
 close all
 figure;

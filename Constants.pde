@@ -25,13 +25,13 @@ public static class Constants {
   };
 
   public static final int MIN_ANGLE[] = {
-   // -110, -70, -140, -105, -95, -105, 0      //These are now just safety checks. Not used.
-   -360, -360, -360, -360, -360, -360, 0
+    -110, -70, -140, -105, -95, -105, 0      //These are now just safety checks. Not used.
+   //-360, -360, -360, -360, -360, -360, 0
   };
 
   public static final int MAX_ANGLE[] = {
-    //150, 120, 25, 90, 90, 40, 180
-    360, 360, 360, 360, 360, 360, 180
+    150, 120, 25, 90, 90, 40, 180
+    //360, 360, 360, 360, 360, 360, 180
   };
   
 
@@ -47,7 +47,7 @@ public static class Constants {
   public static final int SERVOVAL_MAX = 180;
 
   public static final float INITIAL_JOINT_ANGLES[] = {
-    0, 0, 0, 0, 0, 0
+    25,27,-50,-6,-1,-31
   };
 
   public static final int NUM_TO_AVERAGE = 40;
