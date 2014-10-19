@@ -36,7 +36,8 @@ public static class Constants {
   
 
   public static final int SERVO_OFFSET[] = {    //when the sevrowrite gives these angles, corresponds to home position
-    157, 135, 150, 50, 69, 43, 0
+    157, 100, 150, 50, 69, 43, 0
+    //157, 135, 150, 50, 69, 43, 0
   };  
 
   public static final float SERVO_SCALE[] = {      //-1 means increasing servoValue decreases joint Angle.

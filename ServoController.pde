@@ -49,8 +49,14 @@ public class ServoController {
   public void setPinMode(boolean attach) {
     if (arduino != null) {
       if (attach) {
+        if(this.pwmPin == 3) {
+          arduino.pinMode(11, Arduino.SERVO);
+        }
         arduino.pinMode(this.pwmPin, Arduino.SERVO);
       } else {
+        if(this.pwmPin == 3) {
+          arduino.pinMode(11, Arduino.INPUT);
+        }
         arduino.pinMode(this.pwmPin, Arduino.INPUT);
       }
     }

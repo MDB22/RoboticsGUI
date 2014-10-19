@@ -62,7 +62,7 @@ void setup() {
   //   // Modify this line, by changing the "0" to the index of the serial
   //   // port corresponding to your Arduino board (as it appears in the list
   //   // printed by the line above).
-     arduino = new Arduino(this, "COM4", 57600);
+     arduino = new Arduino(this, "COM20", 57600);
   //   
   //   // Set the Arduino digital pins as inputs.
      arduino.pinMode(13, Arduino.SERVO);
