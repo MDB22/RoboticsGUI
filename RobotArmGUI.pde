@@ -18,6 +18,9 @@ MatrixGUI matrixDisplay;
 
 // Global variables for stored/logged data, and controls
 float home[] = new float[Constants.NUM_SERVOS];
+float poses[][];
+String gripper_actions[];
+int numActions;
 ArrayList<float[]> data = new ArrayList<float[]>();
 
 Toggle logData;
@@ -44,10 +47,12 @@ float currentTime = 0;
 float lastTime = 0;
 float timeSinceCommand = 0;
 float finalTime = 0;
+int movementNum = 0;
 int trajectory_iteration = 1;          // use this to get the correct column from the joint angle matrix q
 
 // Variable to indicate a motion command
 boolean move = false;
+boolean inSequence = false;
 
 void setup() {
   size(1200, 800, P3D);
@@ -63,14 +68,29 @@ void setup() {
   //   // Modify this line, by changing the "0" to the index of the serial
   //   // port corresponding to your Arduino board (as it appears in the list
   //   // printed by the line above).
-  //   arduino = new Arduino(this, "COM4", 57600);
+     arduino = new Arduino(this, "COM4", 57600);
   //   
   //   // Set the Arduino digital pins as inputs.
-  //   arduino.pinMode(13, Arduino.SERVO);
+     arduino.pinMode(13, Arduino.SERVO);
    //  println("connected.");   
 
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
+  String[] strings = loadStrings("data/positions.txt");
+  numActions = strings.length;
+  gripper_actions = new String[numActions];
+  poses = new float[numActions][6];
+  println(strings.length);
+  for (int i=0;i<strings.length;i++){
+    String[] data = split(strings[i],' ');
+    float[] pose_i = float(split(data[0],','));
+    gripper_actions[i] = data[1];
+    poses[i] = pose_i;
+  }
+  
+  for (int j=0;j<numActions;j++){
+    println(poses[j][0]+","+poses[j][1]);
+  }
 
   // Add buttons to UI
   addButtons();
@@ -158,6 +178,23 @@ void draw() {
       }
       println("finished one move");  
     }
+    else if (inSequence) {
+      println("starting next sequence");
+      movementNum++;
+      if (movementNum<numActions){
+        float[] pose = poses[movementNum];
+        for (int i=0; i< 6;i++) {
+          Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
+          println(pose[i]);
+          t.setText(pose[i]+"");
+        }
+        Start_p2p();
+      }
+      else{
+        inSequence = false;
+      }
+    }
+      
   } 
   catch (Exception e) {
     println("Bad MATLAB in getNextPosition.m");
@@ -306,6 +343,17 @@ void initMATLAB() {
   }
 }
 
+public void Start_sequence() {
+  inSequence = true;
+    float[] pose = poses[movementNum];
+    for (int i=0; i< 6;i++) {
+      Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
+      println(pose[i]);
+      t.setText(pose[i]+"");
+    }
+    Start_p2p();
+  }
+
 public void Start_linear() {
   
   try {
@@ -421,7 +469,6 @@ public void Home() {
   int count = 0;
 
   for (ServoController s : servos) {
-    print(home[count]);
     s.setJointAngle(home[count]);
     count++;
   }
