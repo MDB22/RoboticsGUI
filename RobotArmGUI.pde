@@ -27,7 +27,8 @@ Toggle attach;
 MatlabComm comm;
 MatlabTypeConverter converter;
 MatlabNumericArray array;
-boolean invalidTrajectory;
+boolean invalidLinearTrajectory;
+boolean invalidp2pTrajectory;
 
 // Simulator
 RobotGUI robotDisplay;
@@ -62,10 +63,10 @@ void setup() {
   //   // Modify this line, by changing the "0" to the index of the serial
   //   // port corresponding to your Arduino board (as it appears in the list
   //   // printed by the line above).
-     arduino = new Arduino(this, "COM4", 57600);
+  //   arduino = new Arduino(this, "COM4", 57600);
   //   
   //   // Set the Arduino digital pins as inputs.
-     arduino.pinMode(13, Arduino.SERVO);
+  //   arduino.pinMode(13, Arduino.SERVO);
    //  println("connected.");   
 
   // Read the home position from the text file
@@ -197,10 +198,14 @@ void drawText() {
   
   textSize(25);
 
-  if (invalidTrajectory) {
-  text("Can't implement trajectory from here.", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y);
+  if (invalidLinearTrajectory) {
+  text("Can't implement Linear trajectory from here.", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y);
   text("Please choose another end point,", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 50);
-  text("or change starting position", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 100);
+  text("or try p2p", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 100);
+  }
+  if (invalidp2pTrajectory) {
+    text("Can't find point to point trajectory.", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y);
+    text("Find another point to go to", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 50);
   }
 }
 
@@ -301,8 +306,53 @@ void initMATLAB() {
   }
 }
 
+public void Start_linear() {
+  
+  try {
+    // Send desired position to MATLAB workspace
+    for (int i = 0; i < Constants.NUM_POSE_INPUTS; i++) {
+      Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
+      comm.proxy.setVariable(t.getName(), float(t.getText()));
+
+      if (t.getName().equals("Time")) {
+        // Make sure to convert to milliseconds
+        finalTime = float(t.getText()) * 1000;
+      }
+    }
+
+    // Then send the current joint angles to MATLAB workspace
+    //for (TextAreaGUI d : display) {
+    for (ServoController s : servos) {
+      comm.proxy.setVariable("q" + s.name, s.getValue());
+    }
+    
+    // Then get MATLAB to generate the desired path 
+    // based on the initial and final points
+    println("--------------------- generating linear trajectory... ---------------------");
+    comm.proxy.eval("generate_trajectory_linear");
+    trajectory_iteration = 1;
+    
+    //Test to see if successful trajectory is implementable.
+    comm.proxy.eval("qbounds = get_qbounds(outside)");
+    double[][] boundsArray = converter.getNumericArray("qbounds").getRealArray2D();
+    println("boundsArray is "+boundsArray[0][0]);
+    if(boundsArray[0][0]==1){
+      invalidLinearTrajectory = true;
+      move=true;
+    }
+    else{
+      // Enables motion
+      invalidLinearTrajectory = false;
+      move = true;
+    }
+  }
+  catch(Exception e) {
+    println("Bad MATLAB in TrajectoryGeneration.m");
+  }
+}
+
 // Event handler for "Start" button
-public void Start() {
+public void Start_p2p() {
 
   try {
     // Send desired position to MATLAB workspace
@@ -324,8 +374,8 @@ public void Start() {
     
     // Then get MATLAB to generate the desired path 
     // based on the initial and final points
-    println("--------------------- generating trajectory... ---------------------");
-    comm.proxy.eval("generate_trajectory");
+    println("--------------------- generating point to point trajectory... ---------------------");
+    comm.proxy.eval("generate_trajectory_p2p");
     trajectory_iteration = 1;
     
     //Test to see if successful trajectory is implementable.
@@ -333,12 +383,12 @@ public void Start() {
     double[][] boundsArray = converter.getNumericArray("qbounds").getRealArray2D();
     println("boundsArray is "+boundsArray[0][0]);
     if(boundsArray[0][0]==1){
-      invalidTrajectory = true;
+      invalidp2pTrajectory = true;
       move=true;
     }
     else{
       // Enables motion
-      invalidTrajectory = false;
+      invalidp2pTrajectory = false;
       move = true;
     }
   }

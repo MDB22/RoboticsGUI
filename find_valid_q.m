@@ -1,7 +1,4 @@
-%%finding q from various starting positions
-
-P_final = [-10; 25; 400];
-RPY_final = [0; 0; 0];
+function valid_q = find_valid_q(P_final, RPY_final,min_angle,max_angle)
 
 q_new_array = [];
 error_array = [];
@@ -31,27 +28,9 @@ for q10 = -170:50:170
     end
 end
 
-total_error 
-for solution = 1:size(error_array)
+if (length(q_new_array)>0)
+    valid_q = q_new_array(:,1);
+else
+    valid_q = false;
+
 end
-
-
-q_new_array
-close all;
-figure;
-plot(q_new_array(1,:))
-hold on
-plot(q_new_array(2,:),'r')
-plot(q_new_array(3,:),'g')
-plot(q_new_array(4,:),'k')
-plot(q_new_array(5,:),'b.')
-plot(q_new_array(6,:),'r.')
-
-
-% plot(q_new_array(1,:))
-% hold on
-% plot(q_new_array(2,:),'r')
-% plot(q_new_array(3,:),'g')
-% plot(q_new_array(4,:),'k')
-% plot(q_new_array(5,:),'b.')
-% plot(q_new_array(6,:),'r.')
