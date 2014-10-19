@@ -18,6 +18,9 @@ MatrixGUI matrixDisplay;
 
 // Global variables for stored/logged data, and controls
 float home[] = new float[Constants.NUM_SERVOS];
+float poses[][];
+String gripper_actions[];
+int numActions;
 ArrayList<float[]> data = new ArrayList<float[]>();
 
 Toggle logData;
@@ -27,7 +30,8 @@ Toggle attach;
 MatlabComm comm;
 MatlabTypeConverter converter;
 MatlabNumericArray array;
-boolean invalidTrajectory;
+boolean invalidLinearTrajectory;
+boolean invalidp2pTrajectory;
 
 // Simulator
 RobotGUI robotDisplay;
@@ -43,10 +47,12 @@ float currentTime = 0;
 float lastTime = 0;
 float timeSinceCommand = 0;
 float finalTime = 0;
+int movementNum = 0;
 int trajectory_iteration = 1;          // use this to get the correct column from the joint angle matrix q
 
 // Variable to indicate a motion command
 boolean move = false;
+boolean inSequence = false;
 
 void setup() {
   size(1200, 800, P3D);
@@ -70,6 +76,21 @@ void setup() {
 
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
+  String[] strings = loadStrings("data/positions.txt");
+  numActions = strings.length;
+  gripper_actions = new String[numActions];
+  poses = new float[numActions][6];
+  println(strings.length);
+  for (int i=0;i<strings.length;i++){
+    String[] data = split(strings[i],' ');
+    float[] pose_i = float(split(data[0],','));
+    gripper_actions[i] = data[1];
+    poses[i] = pose_i;
+  }
+  
+  for (int j=0;j<numActions;j++){
+    println(poses[j][0]+","+poses[j][1]);
+  }
 
   // Add buttons to UI
   addButtons();
@@ -157,6 +178,23 @@ void draw() {
       }
       println("finished one move");  
     }
+    else if (inSequence) {
+      println("starting next sequence");
+      movementNum++;
+      if (movementNum<numActions){
+        float[] pose = poses[movementNum];
+        for (int i=0; i< 6;i++) {
+          Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
+          println(pose[i]);
+          t.setText(pose[i]+"");
+        }
+        Start_p2p();
+      }
+      else{
+        inSequence = false;
+      }
+    }
+      
   } 
   catch (Exception e) {
     println("Bad MATLAB in getNextPosition.m");
@@ -197,10 +235,14 @@ void drawText() {
   
   textSize(25);
 
-  if (invalidTrajectory) {
-  text("Can't implement trajectory from here.", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y);
+  if (invalidLinearTrajectory) {
+  text("Can't implement Linear trajectory from here.", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y);
   text("Please choose another end point,", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 50);
-  text("or change starting position", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 100);
+  text("or try p2p", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 100);
+  }
+  if (invalidp2pTrajectory) {
+    text("Can't find point to point trajectory.", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y);
+    text("Find another point to go to", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 50);
   }
 }
 
@@ -301,8 +343,64 @@ void initMATLAB() {
   }
 }
 
+public void Start_sequence() {
+  inSequence = true;
+    float[] pose = poses[movementNum];
+    for (int i=0; i< 6;i++) {
+      Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
+      println(pose[i]);
+      t.setText(pose[i]+"");
+    }
+    Start_p2p();
+  }
+
+public void Start_linear() {
+  
+  try {
+    // Send desired position to MATLAB workspace
+    for (int i = 0; i < Constants.NUM_POSE_INPUTS; i++) {
+      Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
+      comm.proxy.setVariable(t.getName(), float(t.getText()));
+
+      if (t.getName().equals("Time")) {
+        // Make sure to convert to milliseconds
+        finalTime = float(t.getText()) * 1000;
+      }
+    }
+
+    // Then send the current joint angles to MATLAB workspace
+    //for (TextAreaGUI d : display) {
+    for (ServoController s : servos) {
+      comm.proxy.setVariable("q" + s.name, s.getValue());
+    }
+    
+    // Then get MATLAB to generate the desired path 
+    // based on the initial and final points
+    println("--------------------- generating linear trajectory... ---------------------");
+    comm.proxy.eval("generate_trajectory_linear");
+    trajectory_iteration = 1;
+    
+    //Test to see if successful trajectory is implementable.
+    comm.proxy.eval("qbounds = get_qbounds(outside)");
+    double[][] boundsArray = converter.getNumericArray("qbounds").getRealArray2D();
+    println("boundsArray is "+boundsArray[0][0]);
+    if(boundsArray[0][0]==1){
+      invalidLinearTrajectory = true;
+      move=true;
+    }
+    else{
+      // Enables motion
+      invalidLinearTrajectory = false;
+      move = true;
+    }
+  }
+  catch(Exception e) {
+    println("Bad MATLAB in TrajectoryGeneration.m");
+  }
+}
+
 // Event handler for "Start" button
-public void Start() {
+public void Start_p2p() {
 
   try {
     // Send desired position to MATLAB workspace
@@ -324,8 +422,8 @@ public void Start() {
     
     // Then get MATLAB to generate the desired path 
     // based on the initial and final points
-    println("--------------------- generating trajectory... ---------------------");
-    comm.proxy.eval("generate_trajectory");
+    println("--------------------- generating point to point trajectory... ---------------------");
+    comm.proxy.eval("generate_trajectory_p2p");
     trajectory_iteration = 1;
     
     //Test to see if successful trajectory is implementable.
@@ -333,12 +431,12 @@ public void Start() {
     double[][] boundsArray = converter.getNumericArray("qbounds").getRealArray2D();
     println("boundsArray is "+boundsArray[0][0]);
     if(boundsArray[0][0]==1){
-      invalidTrajectory = true;
+      invalidp2pTrajectory = true;
       move=true;
     }
     else{
       // Enables motion
-      invalidTrajectory = false;
+      invalidp2pTrajectory = false;
       move = true;
     }
   }
@@ -371,7 +469,6 @@ public void Home() {
   int count = 0;
 
   for (ServoController s : servos) {
-    print(home[count]);
     s.setJointAngle(home[count]);
     count++;
   }

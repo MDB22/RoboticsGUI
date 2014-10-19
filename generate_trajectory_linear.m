@@ -78,89 +78,77 @@ outside = false;
 total_trans_error = 0;
 sum_error = [0;0;0;0;0;0];
 
-% %% Trying Proportional method
-% 
-% q_new = q0;
-% error = [0;0;0;0;0;0];
-% xyz = p0;
-% 
-% for i=2:(numel(robot_t))
-%     %fprintf('--------------------step %d------------------------\n',i);
-%     k = (i-1)*num_steps;
-%     k_prev = (i-2)*num_steps;
-%     P_i = posRef(:,k+1);
-%     P_prev = posRef(:,k_prev+1);
-%     P_dot = (P_i - P_prev)/robot_dt;               %difference in position
-%     
-%     RPY_i = angles(:,k+1);
-%     RPY_prev = angles(:,k_prev+1);
-%     RPY_dot = (RPY_i - RPY_prev)/robot_dt;
-%     
-%     
-%     R_i = rotx(RPY_i(1))*roty(RPY_i(2))*rotz(RPY_i(3));     %reference rotation matrix
-%     
-%     xc_ref_dot = [P_dot; RPY_dot];                  %reference velocity
-%     Gain = [5000;5000;5000;1000;1000;1000];
-%     %if ((i>100)&&(total_trans_error < 2))
-%     %    Gain = 0.5*Gain;
-%     %end
-%     
-%     xc_dot = xc_ref_dot + 0.5*Gain.*error + 0*sum_error;            %xc_dot = Kp e
-%     
-%     J = ComputeJacobian(q_new);
-% 
-%     % Make sure we at least try to deal with singularities
-%     if (abs(det(J)) < .1)
-%         det_J = det(J);
-%         JInv = pinv(J);
-%     else
-%         JInv = inv(J);
-%     end
-%     
-%     dq = JInv*xc_dot*robot_dt;
-%     qnew_potential = q_array(:,i-1)+dq;
-%     q_array(:,i) = qnew_potential;
-%     [current_out, joints] = out_of_range(qnew_potential,min_angle,max_angle);
-%     for joint=1:6
-%         if joints(joint)==1 %means out of range.
-%             outside = true;                         %at end will tell if final position in range.
-%             q_array(joint,i) = q_array(joint,i-1);  %use previous value for that joint.
-%             fprintf('exceeded joint %d limits, not implemented.\n',joint);
-%         end
-%     end
-%     
-%     if total_trans_error>600                                       %gives robot a chance to get back on track later.
-%          fprintf(' error too large, likely unreachable. not implemented.\n'); 
-%          q_array(:,i) = q_array(:,i-1);
-%     else
-%         outside = false;
-%     end
-%     qnew = q_array(:,i);
-%     [R_new, P_new] = ForwardKinematics(q_array(:,i));
-%     P_new;
-%     xyz(:,i)=P_new;
-%     
-%     error_translation = P_i - P_new;
-%     total_trans_error = abs(error_translation(1))+abs(error_translation(2))+abs(error_translation(3))
-%     error_orientation = get_error_orientation(R_i,R_new);
-% 
-%     error = [error_translation; error_orientation];
-%     sum_error = sum_error+error;
-% 
-% end
+%% Trying Proportional method
 
-%%
-q_final = find_valid_q(pf, rf,min_angle,max_angle);
-if (q_final == false)
-    outside = true;
-    fprintf('no valid solution found');
-else
-    q_array = angleTrajectory(q0,q_final,length(robot_t));
-    for i=1:length(q_array)
-        [R_new, P_new] = ForwardKinematics(q_array(:,i));
-        xyz(:,i) = P_new;
+q_new = q0;
+error = [0;0;0;0;0;0];
+xyz = p0;
+
+for i=2:(numel(robot_t))
+    %fprintf('--------------------step %d------------------------\n',i);
+    k = (i-1)*num_steps;
+    k_prev = (i-2)*num_steps;
+    P_i = posRef(:,k+1);
+    P_prev = posRef(:,k_prev+1);
+    P_dot = (P_i - P_prev)/robot_dt;               %difference in position
+    
+    RPY_i = angles(:,k+1);
+    RPY_prev = angles(:,k_prev+1);
+    RPY_dot = (RPY_i - RPY_prev)/robot_dt;
+    
+    
+    R_i = rotx(RPY_i(1))*roty(RPY_i(2))*rotz(RPY_i(3));     %reference rotation matrix
+    
+    xc_ref_dot = [P_dot; RPY_dot];                  %reference velocity
+    Gain = [5000;5000;5000;1000;1000;1000];
+    %if ((i>100)&&(total_trans_error < 2))
+    %    Gain = 0.5*Gain;
+    %end
+    
+    xc_dot = xc_ref_dot + 0.5*Gain.*error + 0*sum_error;            %xc_dot = Kp e
+    
+    J = ComputeJacobian(q_new);
+
+    % Make sure we at least try to deal with singularities
+    if (abs(det(J)) < .1)
+        det_J = det(J);
+        JInv = pinv(J);
+    else
+        JInv = inv(J);
     end
+    
+    dq = JInv*xc_dot*robot_dt;
+    qnew_potential = q_array(:,i-1)+dq;
+    q_array(:,i) = qnew_potential;
+    [current_out, joints] = out_of_range(qnew_potential,min_angle,max_angle);
+    for joint=1:6
+        if joints(joint)==1 %means out of range.
+            outside = true;                         %at end will tell if final position in range.
+            q_array(joint,i) = q_array(joint,i-1);  %use previous value for that joint.
+            fprintf('exceeded joint %d limits, not implemented.\n',joint);
+        end
+    end
+    
+    if total_trans_error>600                                       %gives robot a chance to get back on track later.
+         fprintf(' error too large, likely unreachable. not implemented.\n'); 
+         q_array(:,i) = q_array(:,i-1);
+    else
+        outside = false;
+    end
+    qnew = q_array(:,i);
+    [R_new, P_new] = ForwardKinematics(q_array(:,i));
+    P_new;
+    xyz(:,i)=P_new;
+    
+    error_translation = P_i - P_new;
+    total_trans_error = abs(error_translation(1))+abs(error_translation(2))+abs(error_translation(3))
+    error_orientation = get_error_orientation(R_i,R_new);
+
+    error = [error_translation; error_orientation];
+    sum_error = sum_error+error;
+
 end
+
 %%
 close all
 figure;
