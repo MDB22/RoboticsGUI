@@ -14,8 +14,6 @@ else
 end
 tf = 0.1;
 
-
-
 % Find final orientation of end effector given rotation matrix RI0
 yawf = atan2(RI0(2,1),RI0(1,1));
 pitchf = atan2(-RI0(3,1),sqrt(RI0(3,2)^2 + RI0(3,3)^2));
@@ -31,17 +29,6 @@ t = 0:dt:tf;
 tfsettle = 0.05;
 tsettle = (tf+dt):dt:(tf+tfsettle);
 
-% Exact desired position and orientation
-posRef = [xRef(t);yRef(t);zRef(t)];
-angles = [rollRef(t);pitchRef(t);yawRef(t)];    %[rollRef(t)+r0(1);pitchRef(t)+r0(2);yawRef(t)+r0(3)];  %absolute orientation
-qfinal = calculate_q(q0,pf,rf);
-
-for i=length(t)+1:1:(length(t)+length(tsettle))
-    posRef(:,i) = pf;
-    angles(:,i) = rf;
-end
-
-
 robot_dt = 0.001;
 robot_t = 0:robot_dt:(tf+tfsettle);
 q_array = zeros(6,length(robot_t)); q_array(:,1) = q0;
@@ -52,6 +39,7 @@ outside = false;
 total_trans_error = 0;
 sum_error = [0;0;0;0;0;0];
 
+xyz = p0;
 
 q_final = find_valid_q(pf, rf,min_angle,max_angle);
 if (q_final == false)
@@ -65,13 +53,13 @@ else
     end
 end
 
-close all
-figure;
-plot(robot_t,xyz(1,1:length(robot_t)),robot_t,xyz(2,1:length(robot_t)),robot_t,xyz(3,1:length(robot_t)));
-title('position using p2p control');
-
- figure;
- plot(robot_t,q_array(1,:),'-o',robot_t,q_array(2,:),'-o',robot_t,q_array(3,:),'-o',robot_t,q_array(4,:),...
-     '-o',robot_t,q_array(5,:),'-o',robot_t,q_array(6,:),'-o');
- title('joint angles using p2p control')
- legend('q1','q2','q3','q4','q5','q6');
+% close all
+% figure;
+% plot(robot_t,xyz(1,1:length(robot_t)),robot_t,xyz(2,1:length(robot_t)),robot_t,xyz(3,1:length(robot_t)));
+% title('position using p2p control');
+% 
+%  figure;
+%  plot(robot_t,q_array(1,:),'-o',robot_t,q_array(2,:),'-o',robot_t,q_array(3,:),'-o',robot_t,q_array(4,:),...
+%      '-o',robot_t,q_array(5,:),'-o',robot_t,q_array(6,:),'-o');
+%  title('joint angles using p2p control')
+%  legend('q1','q2','q3','q4','q5','q6');

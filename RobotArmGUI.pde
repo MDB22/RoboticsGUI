@@ -68,11 +68,11 @@ void setup() {
   //   // Modify this line, by changing the "0" to the index of the serial
   //   // port corresponding to your Arduino board (as it appears in the list
   //   // printed by the line above).
-  //   arduino = new Arduino(this, "COM4", 57600);
+     arduino = new Arduino(this, "COM4", 57600);
   //   
   //   // Set the Arduino digital pins as inputs.
-   //  arduino.pinMode(13, Arduino.SERVO);
-   //  println("connected.");   
+     arduino.pinMode(13, Arduino.SERVO);
+  //   println("connected.");   
 
   // Read the home position from the text file
   home = float(loadStrings("data/home.txt"));
@@ -81,14 +81,14 @@ void setup() {
   gripper_actions = new String[numActions];
   poses = new float[numActions][6];
   println(strings.length);
-  for (int i=0;i<strings.length;i++){
-    String[] data = split(strings[i],' ');
-    float[] pose_i = float(split(data[0],','));
+  for (int i=0; i<strings.length; i++) {
+    String[] data = split(strings[i], ' ');
+    float[] pose_i = float(split(data[0], ','));
     gripper_actions[i] = data[1];
     poses[i] = pose_i;
   }
-  
-  for (int j=0;j<numActions;j++){
+
+  for (int j=0; j<numActions; j++) {
     println(poses[j][0]+","+poses[j][1]);
   }
 
@@ -97,7 +97,7 @@ void setup() {
 
   // Add logging control to UI
   addLogging();
-  
+
   // Add servo attach/detach control to UI
   addAttach();
 
@@ -109,12 +109,14 @@ void setup() {
 
   // Add servo controllers to UI
   addServos();
-  
+
   // Add user input commands
   addUserInput();
-
+  println("added user input");
   // Add simulated robot
   addRobotDisplay();
+
+  println("added user display");
 
   // Allow for scrolling in knob controls
   addMouseWheelListener();
@@ -126,15 +128,18 @@ void setup() {
 
 void draw() {
   //println("start draw");
-  try {
+  //try {
   //println("starting draw");
   background(background);
   stroke(outline);
-
   lastTime = currentTime;
   currentTime = millis();
 
+
   drawText();
+  if (arduino!=null) {
+    //println("gripper feedback"+arduino.analogRead(Constants.GRIPPER_A_PIN));
+  }
 
   // Update displays with feedback from servos
   for (TextAreaGUI t : display) {
@@ -145,21 +150,21 @@ void draw() {
     if (move) { 
       trajectory_iteration++;
       float dt = currentTime - lastTime;
-      println("moving: t="+currentTime);
-      
+      //println("moving: t="+currentTime);
+
       // Get next set of joint angles for motion
       comm.proxy.eval("qNew = getNextPosition2(q_array,"+trajectory_iteration+");");
       double[][] qNew = converter.getNumericArray("qNew").getRealArray2D();
 
-      print("iteration is "+String.format("%d",trajectory_iteration)+"\n");
-      print("qNew is: [");
-      for (int i=0; i<6; i++){
-        print(String.format("%3.2f, ",qNew[i][0]));
-      }
-      print("]\n");
-      
+      //print("iteration is "+String.format("%d",trajectory_iteration)+"\n");
+      //print("qNew is: [");
+      //for (int i=0; i<6; i++){
+      //  print(String.format("%3.2f, ",qNew[i][0]));
+      //}
+      //print("]\n");
+
       timeSinceCommand += dt;
-      
+
       //println("current: "+currentTime + "  last: " + lastTime + "  timesincecommand: " + timeSinceCommand + "  dt: " + dt + "  final: " + finalTime);
 
       int count = 0;
@@ -172,29 +177,35 @@ void draw() {
       }
 
       //if (timeSinceCommand > finalTime) {
-      if (trajectory_iteration==150){
+      if (trajectory_iteration==150) {
         move = false;
         timeSinceCommand = 0;
       }
-      println("finished one move");  
-    }
-    else if (inSequence) {
+      //println("finished one move");
+    } else if (inSequence) {
+      String gripper_action = gripper_actions[movementNum];
+      println(gripper_action);
+      if (gripper_action.equals("close")) {
+        println("command is close");
+        closeGripper();
+      } else {
+        println("command is open");
+        openGripper();
+      }
       println("starting next sequence");
       movementNum++;
-      if (movementNum<numActions){
+      if (movementNum<numActions) {
         float[] pose = poses[movementNum];
-        for (int i=0; i< 6;i++) {
+        for (int i=0; i< 6; i++) {
           Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
           println(pose[i]);
           t.setText(pose[i]+"");
         }
         Start_p2p();
-      }
-      else{
+      } else {
         inSequence = false;
       }
     }
-      
   } 
   catch (Exception e) {
     println("Bad MATLAB in getNextPosition.m");
@@ -204,9 +215,9 @@ void draw() {
   //rect(matrixDisplay.jointAngles[0],70,10,100);
   robotDisplay.drawRobot();
   //println("finished draw");
-  } catch(Exception e) {
-    println("Fuck you Processing");
-  }
+  /*} catch(Exception e) {
+   println(e);
+   }*/
   //println("end draw");
 }
 
@@ -232,13 +243,13 @@ void drawText() {
 
   text("JV", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+155);
   text("JOmega", Constants.MATRIX_X_LABEL+2*Constants.MATRIX_ELEMENT_WIDTH, Constants.MATRIX_Y_LABEL+225);
-  
+
   textSize(25);
 
   if (invalidLinearTrajectory) {
-  text("Can't implement Linear trajectory from here.", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y);
-  text("Please choose another end point,", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 50);
-  text("or try p2p", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 100);
+    text("Can't implement Linear trajectory from here.", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y);
+    text("Please choose another end point,", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 50);
+    text("or try p2p", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y + 100);
   }
   if (invalidp2pTrajectory) {
     text("Can't find point to point trajectory.", Constants.TRAJECTORY_MSG_X, Constants.TRAJECTORY_MSG_Y);
@@ -334,9 +345,8 @@ void initMATLAB() {
     for (TextAreaGUI d : display) {
       comm.proxy.setVariable("q" + d.getLabel(), float(d.getText()));
     }
-      comm.proxy.setVariable("max_angle", Constants.MAX_ANGLE);    //put joint limits into matlab for checking
-      comm.proxy.setVariable("min_angle", Constants.MIN_ANGLE);
-      
+    comm.proxy.setVariable("max_angle", Constants.MAX_ANGLE);    //put joint limits into matlab for checking
+    comm.proxy.setVariable("min_angle", Constants.MIN_ANGLE);
   } 
   catch (Exception e) {
     println("Exception caught!");
@@ -344,18 +354,19 @@ void initMATLAB() {
 }
 
 public void Start_sequence() {
-  inSequence = true;
-    float[] pose = poses[movementNum];
-    for (int i=0; i< 6;i++) {
-      Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
-      println(pose[i]);
-      t.setText(pose[i]+"");
-    }
-    Start_p2p();
-  }
+  closeGripper();
+  //  inSequence = true;
+  //    float[] pose = poses[movementNum];
+  //    for (int i=0; i< 6;i++) {
+  //      Textfield t = (Textfield) cp5.getController(Constants.POSE_INPUT_NAMES[i]);
+  //      println(pose[i]);
+  //      t.setText(pose[i]+"");
+  //    }
+  //    Start_p2p();
+}
 
 public void Start_linear() {
-  
+
   try {
     // Send desired position to MATLAB workspace
     for (int i = 0; i < Constants.NUM_POSE_INPUTS; i++) {
@@ -373,22 +384,21 @@ public void Start_linear() {
     for (ServoController s : servos) {
       comm.proxy.setVariable("q" + s.name, s.getValue());
     }
-    
+
     // Then get MATLAB to generate the desired path 
     // based on the initial and final points
     println("--------------------- generating linear trajectory... ---------------------");
     comm.proxy.eval("generate_trajectory_linear");
     trajectory_iteration = 1;
-    
+
     //Test to see if successful trajectory is implementable.
     comm.proxy.eval("qbounds = get_qbounds(outside)");
     double[][] boundsArray = converter.getNumericArray("qbounds").getRealArray2D();
     println("boundsArray is "+boundsArray[0][0]);
-    if(boundsArray[0][0]==1){
+    if (boundsArray[0][0]==1) {
       invalidLinearTrajectory = true;
       move=true;
-    }
-    else{
+    } else {
       // Enables motion
       invalidLinearTrajectory = false;
       move = true;
@@ -419,22 +429,21 @@ public void Start_p2p() {
     for (ServoController s : servos) {
       comm.proxy.setVariable("q" + s.name, s.getValue());
     }
-    
+
     // Then get MATLAB to generate the desired path 
     // based on the initial and final points
     println("--------------------- generating point to point trajectory... ---------------------");
     comm.proxy.eval("generate_trajectory_p2p");
     trajectory_iteration = 1;
-    
+
     //Test to see if successful trajectory is implementable.
     comm.proxy.eval("qbounds = get_qbounds(outside)");
     double[][] boundsArray = converter.getNumericArray("qbounds").getRealArray2D();
     println("boundsArray is "+boundsArray[0][0]);
-    if(boundsArray[0][0]==1){
+    if (boundsArray[0][0]==1) {
       invalidp2pTrajectory = true;
       move=true;
-    }
-    else{
+    } else {
       // Enables motion
       invalidp2pTrajectory = false;
       move = true;
@@ -458,7 +467,7 @@ public void Zero() {
 
 public void ToggleServos() {
   boolean mode = attach.getState();
-  
+
   for (ServoController s : servos) {
     s.setPinMode(mode);
   }
@@ -535,5 +544,65 @@ public void keyPressed() {
     exit();
     break;
   }
+}
+
+
+
+public void openGripper() {
+  println("opening gripper");
+  if (arduino!=null) {
+    servos.get(6).knob.setValue(Constants.OPEN_ANGLE);
+    println("servowriting");
+    //delay(100);
+  }
+  println("after opening gripper");
+}
+
+public void closeGripper() {
+  int feedback = 0;
+  int holding = 0;        // trigger counter for gripper not moving       
+  int feedback_angle = 0;
+  int i;
+  boolean moveGripper = true;
+  int startTime = millis();
+  println("closing gripper at time "+startTime);
+  //servos.get(6).knob.setValue(Constants.CLOSE_ANGLE);
+  while (moveGripper) {
+    while (millis ()-startTime<200) {
+      println(millis()-startTime);
+    }
+    if (arduino!=null) {
+      println("servowriting to "+Constants.CLOSE_ANGLE);
+      servos.get(6).knob.setValue(Constants.CLOSE_ANGLE);
+      while (millis ()-startTime<200) {
+        println(millis()-startTime);
+      }
+      for (i = 0; i < Constants.ITERATIONS; i++) {
+        feedback += arduino.analogRead(Constants.GRIPPER_A_PIN);
+        print("feedback in loop: "+feedback);
+        //delay(10);
+      }
+      feedback/=i;
+      println("averaged: "+feedback);
+      feedback_angle = (int) map(feedback, Constants.MIN_FEEDBACK[6], Constants.MAX_FEEDBACK[6], Constants.OPEN_ANGLE, Constants.CLOSE_ANGLE); 
+      println("feedbackangle: "+feedback_angle);
+      if (Constants.CLOSE_ANGLE - feedback_angle > 5) {
+        println("increasing holding");
+        holding++;
+        //} else {
+          //println("holding = 0");
+        //  holding = 0;
+      }
+      if (holding > 5) {
+        println("holding>5, servowriting now to "+(feedback_angle-Constants.GRIP_STRENGTH));
+        servos.get(6).knob.setValue(feedback_angle-Constants.GRIP_STRENGTH);
+        moveGripper = false;
+        println("gripping object");
+      }
+    } else {
+      moveGripper = false;
+    }
+  }
+  println("exited while loop");
 }
 

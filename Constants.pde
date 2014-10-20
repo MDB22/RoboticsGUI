@@ -17,26 +17,26 @@ public static class Constants {
   };
 
   public static final int MIN_FEEDBACK[] = {
-    165, 176, 168, 189, 184, 185, 390
+    165, 176, 168, 189, 184, 185, 356
   };
 
   public static final int MAX_FEEDBACK[] = {
-    684, 688, 684, 727, 726, 694, 600
+    684, 688, 684, 727, 726, 694, 578
   };
 
   public static final int MIN_ANGLE[] = {
-    -110, -70, -140, -105, -95, -105, 50      //These are now just safety checks. Not used.
+    -75, -40, -140, -105, -95, -105, 50      //These are now just safety checks. Not used.
    //-360, -360, -360, -360, -360, -360, 0
   };
 
   public static final int MAX_ANGLE[] = {           
-    150, 120, 25, 90, 90, 40, 110
+    95, 70, 28, 38, 53, 30, 120
     //360, 360, 360, 360, 360, 360, 180
   };
   
 
   public static final int SERVO_OFFSET[] = {    //when the sevrowrite gives these angles, corresponds to home position
-    157, 95, 150, 50, 69, 43, 0
+    101, 95, 150, 50, 69, 43, 0
     //157, 135, 150, 50, 69, 43, 0
   };  
 
@@ -48,7 +48,7 @@ public static class Constants {
   public static final int SERVOVAL_MAX = 180;
 
   public static final float INITIAL_JOINT_ANGLES[] = {
-    25,27,-50,-6,-1,-31
+    25,27,-50,-6,-1,-31, 50
   };
 
   public static final int NUM_TO_AVERAGE = 40;
@@ -75,10 +75,10 @@ public static class Constants {
   };
 
   // Constants for the Button objects
-  public static final int NUM_BUTTONS = 7;
+  public static final int NUM_BUTTONS = 9;
 
   public static final String BUTTON_NAMES[] = {
-    "Start", "Stop", "Zero", "Home", "SetHome", "Record", "Exit"
+    "Start_sequence", "Start_linear", "Start_p2p", "Stop", "Zero", "Home", "SetHome", "Record", "Exit"
   };
 
   public static final int BUTTON_X = 80;
@@ -159,11 +159,11 @@ public static class Constants {
   
   
   // Gripper constants
-  public static final int GRIPPER_A_PIN A5
-  public static final int CLOSE_ANGLE 110
-  public static final int OPEN_ANGLE 50
-  public static final int ITERATIONS 10  // number of itterations to average feedback
-  public static final int GRIP_STRENGTH 15 // smaller value is tighter grip
-  public static final int GRIPPER_PIN 9
+  public static final int GRIPPER_A_PIN = 5;
+  public static final int CLOSE_ANGLE = 120;
+  public static final int OPEN_ANGLE = 50;
+  public static final int ITERATIONS = 10;  // number of itterations to average feedback
+  public static final int GRIP_STRENGTH = 15; // smaller value is tighter grip
+  public static final int GRIPPER_PIN = 9;
 }
 

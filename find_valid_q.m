@@ -15,7 +15,7 @@ for q10 = -170:50:170
                         q_start = [q10;q20;q30;q40;q50;q60];
                         [q_new, error] = calculate_q(q_start, P_final, RPY_final);
                         abs_error = abs(error(1))+abs(error(2))+abs(error(3))+abs(error(4))+abs(error(5))+abs(error(6));
-                        if ((abs_error<10)&&(~out_of_range(q_new,min_angle,max_angle)))
+                        if ((abs_error<20)&&(~out_of_range(q_new,min_angle,max_angle)))
                             q_new_array(:,size(q_new_array,2)+1)=q_new;
                             error_array(:,size(error_array,2)+1)=error;
                             q_new;
@@ -28,6 +28,7 @@ for q10 = -170:50:170
     end
 end
 q_new_array
+error_array
 
 if (length(q_new_array)>0)
     smallestSum = 99999;
