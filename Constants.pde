@@ -25,12 +25,12 @@ public static class Constants {
   };
 
   public static final int MIN_ANGLE[] = {
-    -75, -40, -140, -105, -95, -105, 50      //These are now just safety checks. Not used.
+    -75, -40, -140, -105, -95, -105, 10      //These are now just safety checks. Not used.
    //-360, -360, -360, -360, -360, -360, 0
   };
 
   public static final int MAX_ANGLE[] = {           
-    95, 70, 28, 38, 53, 30, 120
+    95, 70, 28, 38, 53, 30, 70
     //360, 360, 360, 360, 360, 360, 180
   };
   
@@ -75,10 +75,10 @@ public static class Constants {
   };
 
   // Constants for the Button objects
-  public static final int NUM_BUTTONS = 9;
+  public static final int NUM_BUTTONS = 10;
 
   public static final String BUTTON_NAMES[] = {
-    "Start_sequence", "Start_linear", "Start_p2p", "Stop", "Zero", "Home", "SetHome", "Record", "Exit"
+    "Start_joint_sequence", "Start_sequence", "Start_linear", "Start_p2p", "Stop", "Zero", "Home", "SetHome", "Record", "Exit"
   };
 
   public static final int BUTTON_X = 80;
@@ -160,8 +160,8 @@ public static class Constants {
   
   // Gripper constants
   public static final int GRIPPER_A_PIN = 5;
-  public static final int CLOSE_ANGLE = 120;
-  public static final int OPEN_ANGLE = 50;
+  public static final int CLOSE_ANGLE = 33;
+  public static final int OPEN_ANGLE = 10;
   public static final int ITERATIONS = 10;  // number of itterations to average feedback
   public static final int GRIP_STRENGTH = 15; // smaller value is tighter grip
   public static final int GRIPPER_PIN = 9;

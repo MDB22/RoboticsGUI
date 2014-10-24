@@ -197,19 +197,19 @@ title('position using P control');
 % % qfinal
 % % 
 %  %close all
-%  figure;
-%  plot(t,xRef(t),t,yRef(t),t,zRef(t));
-%  title('Position');
-%  legend('xref','yref','zref');
-%  figure;
+  figure;
+  plot(t,xRef(t),t,yRef(t),t,zRef(t));
+  title('Position');
+  legend('xref','yref','zref');
+  figure;
 %  plot(t,angles(1,:),t,angles(2,:),t,angles(3,:));
 %  title('Orientation');
 %  legend('rollref','pitchref','yawref');
-%  figure;
-%  plot(robot_t,q_array(1,:),'-o',robot_t,q_array(2,:),'-o',robot_t,q_array(3,:),'-o',robot_t,q_array(4,:),...
-%      '-o',robot_t,q_array(5,:),'-o',robot_t,q_array(6,:),'-o');
-%  title('joint angles')
-%  legend('q1','q2','q3','q4','q5','q6');
+  figure;
+  plot(robot_t,q_array(1,:),'-o',robot_t,q_array(2,:),'-o',robot_t,q_array(3,:),'-o',robot_t,q_array(4,:),...
+      '-o',robot_t,q_array(5,:),'-o',robot_t,q_array(6,:),'-o');
+  title('joint angles')
+  legend('q1','q2','q3','q4','q5','q6');
 %  
 %   figure;
 %  plot(robot_t,q_array_filtered(1,:),'-o',robot_t,q_array_filtered(2,:),'-o',robot_t,q_array_filtered(3,:),'-o',robot_t,q_array_filtered(4,:),...
